@@ -1,6 +1,7 @@
 <script lang="ts">
   import Sidebar from './lib/Sidebar.svelte';
   import SidebarToggle from './lib/SidebarToggle.svelte';
+  import MarkdownEditor from './lib/MarkdownEditor.svelte';
 
   // 사이드바 상태
   let sidebarOpen = false;
@@ -18,27 +19,15 @@
 
 <main class:sidebar-open={sidebarOpen}>
   <div class="content">
-    <div class="welcome">
-      <h1>🌲 NoteForest</h1>
-      <p>마크다운 기반 메모 도구</p>
-      <div class="features">
-        <div class="feature">
-          <span class="icon">📝</span>
-          <h3>마크다운 지원</h3>
-          <p>강력한 마크다운 에디터로 메모를 작성하세요</p>
-        </div>
-        <div class="feature">
-          <span class="icon">🔍</span>
-          <h3>빠른 검색</h3>
-          <p>메모를 빠르게 찾고 관리하세요</p>
-        </div>
-        <div class="feature">
-          <span class="icon">🌐</span>
-          <h3>웹 기반</h3>
-          <p>어디서나 접근 가능한 웹 애플리케이션</p>
-        </div>
-      </div>
-    </div>
+    <!-- 마크다운 에디터 -->
+    <MarkdownEditor 
+      placeholder="마크다운으로 메모를 작성해보세요... 
+      
+# 제목을 만들려면 # 을 사용하세요
+**굵은 글씨**는 별표 두 개로
+*기울임체*는 별표 하나로
+- 리스트는 대시로 시작하세요"
+    />
   </div>
 </main>
 
@@ -64,81 +53,18 @@
   main.sidebar-open {
     margin-left: 320px;
   }
-
   .content {
-    padding: 2rem;
+    padding: 1rem;
     padding-top: 5rem; /* 토글 버튼 공간 */
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
   }
 
-  .welcome {
-    max-width: 800px;
-    margin: 0 auto;
-    text-align: center;
+  .content :global(.editor-container) {
+    flex: 1;
+    min-height: 0; /* flexbox 자식이 넘치지 않도록 */
   }
-
-  .welcome h1 {
-    font-size: 3rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    background: linear-gradient(135deg, #64b5f6 0%, #81c784 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-  }
-
-  .welcome p {
-    font-size: 1.2rem;
-    color: #a0a0b2;
-    margin-bottom: 3rem;
-  }
-
-  .features {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
-    margin-top: 2rem;
-  }
-
-  .feature {
-    background: linear-gradient(145deg, #1e1e2e, #262640);
-    padding: 2rem;
-    border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 
-      0 8px 24px rgba(0, 0, 0, 0.3),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
-  }
-
-  .feature:hover {
-    transform: translateY(-4px);
-    box-shadow: 
-      0 12px 32px rgba(0, 0, 0, 0.4),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  }
-
-  .feature .icon {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-    display: block;
-  }
-
-  .feature h3 {
-    color: #f0f0f0;
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: 0.75rem;
-  }
-
-  .feature p {
-    color: #a0a0b2;
-    font-size: 0.9rem;
-    line-height: 1.5;
-    margin: 0;
-  }
-
   /* 반응형 */
   @media (max-width: 768px) {
     main.sidebar-open {
@@ -146,21 +72,8 @@
     }
 
     .content {
-      padding: 1rem;
+      padding: 0.75rem;
       padding-top: 4rem;
-    }
-
-    .welcome h1 {
-      font-size: 2.5rem;
-    }
-
-    .features {
-      grid-template-columns: 1fr;
-      gap: 1.5rem;
-    }
-
-    .feature {
-      padding: 1.5rem;
     }
   }
 </style>
