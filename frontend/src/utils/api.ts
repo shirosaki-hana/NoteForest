@@ -1,5 +1,5 @@
 // API 기본 설정 및 유틸리티 함수
-const API_BASE_URL = 'http://localhost:3001';
+//const API_BASE_URL = 'http://localhost:3001';
 
 // 메모 파일 타입
 export interface NoteFile {
