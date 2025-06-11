@@ -1,5 +1,5 @@
 // API 기본 설정 및 유틸리티 함수
-const API_BASE_URL = 'http://localhost:3000';
+const API_BASE_URL = 'http://localhost:3001';
 
 // API 응답 타입
 export interface ApiResponse<T = any> {
