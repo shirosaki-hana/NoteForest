@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import { requireAuth, authRouter } from './auth';
+import { apiRouter } from './api';
 import { Request, Response } from 'express';
 
 dotenv.config();
@@ -20,15 +21,15 @@ app.use(cookieParser());
 // 인증 라우트
 app.use('/auth', authRouter);
 
+// API 라우트 (인증 필요)
+app.use('/api', requireAuth, apiRouter);
+
 // 정적 파일 및 루트 라우트 인증 적용
 app.use(requireAuth, express.static(frontendDistPath));
 
 app.get('/', requireAuth, (req: Request, res: Response) => {
   res.sendFile(path.join(frontendDistPath, 'index.html'));
 });
-
-// API 라우트 인증 적용 예시
-app.use('/api', requireAuth);
 
 // 서버 리스닝
 app.listen(PORT, () => {
