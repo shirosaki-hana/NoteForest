@@ -1,6 +1,21 @@
 // API 기본 설정 및 유틸리티 함수
 const API_BASE_URL = 'http://localhost:3001';
 
+// 메모 파일 타입
+export interface NoteFile {
+  filename: string;
+  name: string;
+  path: string;
+  lastModified: string;
+}
+
+// 메모 리스트 API 응답 타입
+export interface NoteListResponse {
+  success: boolean;
+  data: NoteFile[];
+  count: number;
+}
+
 // API 응답 타입
 export interface ApiResponse<T = any> {
   success: boolean;
@@ -31,7 +46,7 @@ export async function apiCall<T = any>(
       config.body = JSON.stringify(body);
     }
 
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+    const response = await fetch(`${endpoint}`, config);
     const data = await response.json();
 
     if (!response.ok) {
@@ -67,3 +82,16 @@ export const api = {
   delete: <T>(endpoint: string, headers?: Record<string, string>) =>
     apiCall<T>(endpoint, 'DELETE', undefined, headers),
 };
+
+// 특정 API 함수들
+export async function getNoteList(): Promise<NoteListResponse> {
+  const response = await api.get<NoteListResponse>('/api/list');
+  if (response.success && response.data) {
+    return response.data;
+  }
+  return {
+    success: false,
+    data: [],
+    count: 0
+  };
+}
