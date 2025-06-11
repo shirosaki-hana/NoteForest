@@ -1,0 +1,29 @@
+{
+  "name": "memoryforest",
+  "version": "1.0.0",
+  "description": "Full-stack web application",
+  "scripts": {
+    "dev": "concurrently \"pnpm run dev:backend\" \"pnpm run dev:frontend\"",
+    "dev:backend": "pnpm --filter backend run dev",
+    "dev:frontend": "pnpm --filter frontend run dev",
+    "build": "pnpm run build:backend && pnpm run build:frontend",
+    "build:backend": "pnpm --filter backend run build",
+    "build:frontend": "pnpm --filter frontend run build",
+    "start": "pnpm --filter backend run start",
+    "install:all": "pnpm install",
+    "clean": "pnpm --filter backend run clean && pnpm --filter frontend run clean",
+    "clean:all": "rimraf **/node_modules **/dist **/.svelte-kit **/build",
+    "fresh": "pnpm clean:all && pnpm install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "rimraf": "^6.0.1"
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "svelte",
+    "typescript"
+  ],
+  "private": true
+}
