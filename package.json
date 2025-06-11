@@ -12,7 +12,8 @@
     "start": "pnpm --filter backend run start",
     "install:all": "pnpm install",
     "clean": "pnpm --filter backend run clean && pnpm --filter frontend run clean",
-    "clean:all": "rimraf **/node_modules **/dist **/.svelte-kit **/build",
+    "clean:deps": "pnpm --filter backend run clean:deps && pnpm --filter frontend run clean:deps",
+    "clean:all": "rimraf backend/dist backend/node_modules frontend/.svelte-kit frontend/build frontend/node_modules node_modules",
     "fresh": "pnpm clean:all && pnpm install"
   },
   "devDependencies": {

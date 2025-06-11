@@ -12,7 +12,9 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint .",
-		"clean": "rimraf .svelte-kit node_modules"
+	    "clean": "rimraf .svelte-kit build",
+    	"clean:deps": "rimraf node_modules",
+    	"clean:all": "pnpm clean && pnpm clean:deps"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.5",
