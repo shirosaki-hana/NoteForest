@@ -4,10 +4,10 @@ import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import { Router, Request, Response, NextFunction } from 'express';
 
-const SAVE_DIR = path.join(__dirname, '../auth');
+const SAVE_DIR = path.join(__dirname, '../../auth');
 const PASSWORD_FILE = path.join(SAVE_DIR, 'password.hash');
 const SESSION_FILE = path.join(SAVE_DIR, 'sessions.json');
-const TEMPLATES_DIR = path.join(__dirname, '../templates');
+const TEMPLATES_DIR = path.join(__dirname, '../../templates');
 const SESSION_COOKIE = 'nf_session';
 const SESSION_TTL = 1000 * 60 * 60 * 24; // 24시간
 

@@ -3,8 +3,8 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import cookieParser from 'cookie-parser';
-import { requireAuth, authRouter } from './auth';
-import { apiRouter } from './api';
+import { requireAuth, authRouter } from './lib/auth';
+import { apiRouter } from './lib/api';
 import { Request, Response } from 'express';
 
 dotenv.config();
