@@ -98,6 +98,11 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
 // 인증/비밀번호 설정 라우트
 export const authRouter = Router();
 authRouter.get('/', (req: Request, res: Response) => {
+
+    const clientIP = req.headers['x-forwarded-for'] || req.ip || req.socket.remoteAddress || 'Unknown IP';
+    const timestamp = new Date().toISOString();
+    console.log(`[Auth] ${timestamp} | Connection from: ${clientIP}`);
+
   if (!fs.existsSync(PASSWORD_FILE)) {
     const template = loadTemplate('password-setup.html');
     res.send(template);
@@ -127,16 +132,23 @@ authRouter.post('/set', async (req: Request, res: Response) => {
 });
 
 authRouter.post('/login', async (req: Request, res: Response) => {
+
+    const clientIP = req.headers['x-forwarded-for'] || req.ip || req.socket.remoteAddress || 'Unknown IP';
+    const timestamp = new Date().toISOString();
+    console.log(`[Auth] ${timestamp} | Try login from : ${clientIP}`);
+
   if (!fs.existsSync(PASSWORD_FILE)) { res.redirect('/auth'); return; }
   try {
     const pw = req.body.pw;
     if (!pw) {
+      console.log(`[Auth] ${timestamp} | Login fail(empty) from  : ${clientIP}`);
       res.send(renderLoginWithError('비밀번호를 입력해주세요.'));
       return;
     }
     const hash = fs.readFileSync(PASSWORD_FILE, 'utf-8');
     const ok = await bcrypt.compare(pw, hash);
     if (!ok) { 
+      console.log(`[Auth] ${timestamp} | Login fail(wrong auth) from : ${clientIP}`);
       res.send(renderLoginWithError('비밀번호가 틀렸습니다.')); 
       return; 
     }

@@ -13,19 +13,12 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 const frontendDistPath = path.join(__dirname, '../../frontend/dist');
 
-// 미들웨어
-app.use(cors());
+app.use(cors()); //TODO : 환경변수로 프로덕트/데브모드 구분하고 운영 도메인 입력받아서 CORS제한하도록 보안 강화 필요)
 app.use(express.json());
 app.use(cookieParser());
-
-// 인증 라우트
-app.use('/auth', authRouter);
-
-// API 라우트 (인증 필요)
-app.use('/api', requireAuth, apiRouter);
-
-// 정적 파일 및 루트 라우트 인증 적용
-app.use(requireAuth, express.static(frontendDistPath));
+app.use('/auth', authRouter); // 인증 라우트
+app.use('/api', requireAuth, apiRouter); // API 라우트
+app.use(requireAuth, express.static(frontendDistPath)); // 정적 파일 및 루트 라우트 인증 적용
 
 app.get('/', requireAuth, (req: Request, res: Response) => {
   res.sendFile(path.join(frontendDistPath, 'index.html'));
@@ -33,6 +26,6 @@ app.get('/', requireAuth, (req: Request, res: Response) => {
 
 // 서버 리스닝
 app.listen(PORT, () => {
-  console.log(`Server is running on http://127.0.0.1:${PORT}`);
-  console.log(`Frontend served from: ${frontendDistPath}`);
+  const timestamp = new Date().toISOString();
+  console.log(`[Server] ${timestamp} | Server is running on http://127.0.0.1:${PORT}`);
 });
