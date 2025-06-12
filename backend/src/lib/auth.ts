@@ -3,6 +3,7 @@ import fs from 'fs';
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import { Router, Request, Response, NextFunction } from 'express';
+import { writelog } from './log';
 
 const SAVE_DIR = path.join(__dirname, '../../auth');
 const PASSWORD_FILE = path.join(SAVE_DIR, 'password.hash');
@@ -100,8 +101,7 @@ export const authRouter = Router();
 authRouter.get('/', (req: Request, res: Response) => {
 
     const clientIP = req.headers['x-forwarded-for'] || req.ip || req.socket.remoteAddress || 'Unknown IP';
-    const timestamp = new Date().toISOString();
-    console.log(`[Auth] ${timestamp} | Connection from: ${clientIP}`);
+    writelog('Server', `Connection from: ${clientIP}`);    
 
   if (!fs.existsSync(PASSWORD_FILE)) {
     const template = loadTemplate('password-setup.html');
@@ -114,48 +114,76 @@ authRouter.get('/', (req: Request, res: Response) => {
 
 authRouter.use(require('express').urlencoded({ extended: true }));
 authRouter.post('/set', async (req: Request, res: Response) => {
+
+  const clientIP = req.headers['x-forwarded-for'] || req.ip || req.socket.remoteAddress || 'Unknown IP';  
+
   if (fs.existsSync(PASSWORD_FILE)) { res.redirect('/auth'); return; }
+
   const pw = req.body.pw;
-  if (!pw || pw.length < 4) { 
-    res.send(renderPasswordSetupWithError('비밀번호는 4자 이상이어야 합니다.')); 
+
+  if (!pw || pw.length < 8) { 
+    res.send(renderPasswordSetupWithError('비밀번호는 8자 이상이어야 합니다.')); 
     return; 
   }
+
   try {
+
+    writelog('Auth', `Password set attempt from : ${clientIP}`);
     const hash = await bcrypt.hash(pw, 10);
     fs.writeFileSync(PASSWORD_FILE, hash);
     const token = createSession();
     res.cookie(SESSION_COOKIE, token, { httpOnly: true });
     res.redirect('/');
+
+    writelog('Auth', `Login success from : ${clientIP}`);
+    writelog('Auth', `Session created: ${token} for IP: ${clientIP}`);
+
   } catch {
+  
     res.send(renderPasswordSetupWithError('오류가 발생했습니다.'));
+
   }
 });
 
 authRouter.post('/login', async (req: Request, res: Response) => {
 
-    const clientIP = req.headers['x-forwarded-for'] || req.ip || req.socket.remoteAddress || 'Unknown IP';
-    const timestamp = new Date().toISOString();
-    console.log(`[Auth] ${timestamp} | Try login from : ${clientIP}`);
+  const clientIP = req.headers['x-forwarded-for'] || req.ip || req.socket.remoteAddress || 'Unknown IP';
+  const timestamp = new Date().toISOString();
+
+  writelog('Auth', `Login attempt from : ${clientIP}`);
 
   if (!fs.existsSync(PASSWORD_FILE)) { res.redirect('/auth'); return; }
+
   try {
+
     const pw = req.body.pw;
+
     if (!pw) {
-      console.log(`[Auth] ${timestamp} | Login fail(empty) from  : ${clientIP}`);
+      writelog('Auth', `Login fail(password empty) from : ${clientIP}`);
       res.send(renderLoginWithError('비밀번호를 입력해주세요.'));
       return;
     }
+
     const hash = fs.readFileSync(PASSWORD_FILE, 'utf-8');
     const ok = await bcrypt.compare(pw, hash);
+
     if (!ok) { 
-      console.log(`[Auth] ${timestamp} | Login fail(wrong auth) from : ${clientIP}`);
+      writelog('Auth', `Login fail(wrong password) from : ${clientIP}`);
       res.send(renderLoginWithError('비밀번호가 틀렸습니다.')); 
       return; 
     }
+
+    writelog('Auth', `Login success from : ${clientIP}`);
+
     const token = createSession();
+    writelog('Auth', `Session created: ${token} for IP: ${clientIP}`);
+
     res.cookie(SESSION_COOKIE, token, { httpOnly: true });
     res.redirect('/');
+
   } catch {
+
     res.send(renderLoginWithError('로그인 처리 중 오류가 발생했습니다.'));
+
   }
 });

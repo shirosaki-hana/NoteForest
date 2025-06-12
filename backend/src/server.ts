@@ -5,6 +5,7 @@ import path from 'path';
 import cookieParser from 'cookie-parser';
 import { requireAuth, authRouter } from './lib/auth';
 import { apiRouter } from './lib/api';
+import { writelog } from './lib/log';
 import { Request, Response } from 'express';
 
 dotenv.config();
@@ -18,7 +19,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use('/auth', authRouter); // 인증 라우트
 app.use('/api', requireAuth, apiRouter); // API 라우트
-app.use(requireAuth, express.static(frontendDistPath)); // 정적 파일 및 루트 라우트 인증 적용
+app.use(requireAuth, express.static(frontendDistPath)); // 정적 파일 서빙
 
 app.get('/', requireAuth, (req: Request, res: Response) => {
   res.sendFile(path.join(frontendDistPath, 'index.html'));
@@ -26,6 +27,7 @@ app.get('/', requireAuth, (req: Request, res: Response) => {
 
 // 서버 리스닝
 app.listen(PORT, () => {
-  const timestamp = new Date().toISOString();
-  console.log(`[Server] ${timestamp} | Server is running on http://127.0.0.1:${PORT}`);
+
+  writelog('server', `Server is running on http://127.0.0.1:${PORT}`);
+
 });
