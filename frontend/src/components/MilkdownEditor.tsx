@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { Box } from '@mui/material';
 import {
   Editor,
@@ -9,7 +8,7 @@ import { nord } from '@milkdown/theme-nord';
 import { commonmark } from '@milkdown/preset-commonmark';
 import { history } from '@milkdown/plugin-history';
 import { gfm } from '@milkdown/preset-gfm';
-import { ReactEditor, useEditor } from '@milkdown/react';
+import { Milkdown, MilkdownProvider, useEditor } from '@milkdown/react'; // ReactEditor 대신 Milkdown, MilkdownProvider import
 import { listener, listenerCtx } from '@milkdown/plugin-listener';
 import { clipboard } from '@milkdown/plugin-clipboard';
 
@@ -18,52 +17,55 @@ interface MilkdownEditorProps {
   onContentChange?: (markdown: string) => void;
 }
 
-export default function MilkdownEditor({ 
-  initialContent = "# NoteForest 에디터\n\n여기에 마크다운을 작성해보세요!\n\n- **굵게** 쓰기\n- *기울임* 쓰기\n- `코드` 작성\n\n## 코드 블록\n\n```typescript\nfunction hello() {\n  console.log('Hello, NoteForest!');\n}\n```\n\n> 인용문도 사용할 수 있습니다.\n\n테이블도 지원합니다:\n\n| 기능 | 지원 여부 |\n|------|----------|\n| 마크다운 | ✅ |\n| WYSIWYG | ✅ |\n| 다크 테마 | ✅ |",
-  onContentChange 
-}: MilkdownEditorProps) {
-  const [content, setContent] = useState(initialContent);
-
-  useEffect(() => {
-    onContentChange?.(content);
-  }, [content, onContentChange]);
-  const { editor } = useEditor(
-    (root) =>
-      Editor.make()
-        .config((ctx) => {
-          ctx.set(rootCtx, root);
-          ctx.set(defaultValueCtx, content);
-          ctx
-            .get(listenerCtx)
-            .beforeMount(() => {
-              console.log('에디터 마운트 준비 중...');
-            })
-            .mounted(() => {
-              console.log('에디터 마운트 완료!');
-            })
-            .updated(() => {
-              console.log('문서 업데이트됨');
-            })
-            .markdownUpdated((_ctx, markdown) => {
-              console.log('마크다운 업데이트:', markdown.slice(0, 50) + '...');
-              setContent(markdown);
-            })
-            .blur(() => {
-              console.log('에디터 포커스 잃음');
-            })
-            .focus(() => {
-              console.log('에디터 포커스 받음');
-            })            .destroy(() => {
-              console.log('에디터 제거됨');
-            });
-        })
-        .use(nord)
-        .use(commonmark)
-        .use(gfm)
-        .use(history)
-        .use(listener)
-        .use(clipboard)
+// 내부 에디터 로직을 담당하는 컴포넌트
+const MilkdownInternalEditor = ({ initialContent, onContentChange }: MilkdownEditorProps) => {
+  useEditor((root) => // get을 명시적으로 사용하지 않아도 MilkdownProvider와 Milkdown이 처리
+    Editor.make()
+      .config((ctx) => {
+        ctx.set(rootCtx, root);
+        // initialContent prop 또는 기본값을 defaultValueCtx에 설정
+        ctx.set(defaultValueCtx, initialContent || "# NoteForest 에디터\n\n여기에 마크다운을 작성해보세요!\n\n- **굵게** 쓰기\n- *기울임* 쓰기\n- `코드` 작성\n\n## 코드 블록\n\n```typescript\nfunction hello() {\n  console.log('Hello, NoteForest!');\n}\n```\n\n> 인용문도 사용할 수 있습니다.\n\n테이블도 지원합니다:\n\n| 기능 | 지원 여부 |\n|------|----------|\n| 마크다운 | ✅ |\n| WYSIWYG | ✅ |\n| 다크 테마 | ✅ |");
+        ctx
+          .get(listenerCtx)
+          .beforeMount(() => {
+            console.log('에디터 마운트 준비 중...');
+          })
+          .mounted(() => {
+            console.log('에디터 마운트 완료!');
+          })
+          .updated(() => { // 이 리스너는 문서 객체가 변경될 때마다 호출됩니다.
+            console.log('문서 업데이트됨');
+          })
+          .markdownUpdated((_ctx, markdown) => {
+            console.log('마크다운 업데이트:', markdown.slice(0, 50) + '...');
+            onContentChange?.(markdown); // 부모 컴포넌트로 변경된 마크다운 전달
+          })
+          .blur(() => {
+            console.log('에디터 포커스 잃음');
+          })
+          .focus(() => {
+            console.log('에디터 포커스 받음');
+          })
+          .destroy(() => {
+            console.log('에디터 제거됨');
+          });
+      })
+      .config(nord)
+      .use(commonmark)
+      .use(gfm)
+      .use(history)
+      .use(listener)
+      .use(clipboard)
   );
+
+  return <Milkdown />; // ReactEditor 대신 Milkdown 컴포넌트 사용
+};
+
+export default function MilkdownEditor({
+  initialContent, // 기본값은 MilkdownInternalEditor에서 처리
+  onContentChange
+}: MilkdownEditorProps) {
+  // 기존의 useState와 useEffect는 MilkdownInternalEditor 내부 로직으로 대체되었습니다.
   return (
     <Box
       sx={{
@@ -194,7 +196,12 @@ export default function MilkdownEditor({
         },
       }}
     >
-      <ReactEditor editor={editor} />
+      <MilkdownProvider>
+        <MilkdownInternalEditor
+          initialContent={initialContent}
+          onContentChange={onContentChange}
+        />
+      </MilkdownProvider>
     </Box>
   );
 }
