@@ -1,18 +1,13 @@
 import { useState, useRef, useEffect } from 'react'
 import { ThemeProvider } from '@mui/material/styles'
-import { 
-  CssBaseline, 
-  Box,
-  TextField,
-  Chip,
-  Stack,
-  Autocomplete,
-} from '@mui/material'
+import { CssBaseline, Box, TextField, Chip, Stack, Autocomplete } from '@mui/material'
 import Header from './components/Header'
 import Sidebar from './components/Sidebar'
 import { MilkdownEditor, type MilkdownEditorRef } from './components/MilkdownEditor'
 import { MilkdownProvider } from '@milkdown/react'
 import { theme } from './theme'
+import { v4 } from 'uuid'
+import { writeNote, getNote } from './utils/api'
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -20,49 +15,45 @@ function App() {
   const [noteTitle, setNoteTitle] = useState<string>('')
   const [noteTags, setNoteTags] = useState<string[]>([])
   const [noteContent, setNoteContent] = useState<string>('')
-  const [editorKey, setEditorKey] = useState<number>(0) // 에디터 재마운트를 위한 key
+  const [editorKey, setEditorKey] = useState<number>(0)
   const editorRef = useRef<MilkdownEditorRef>(null)
 
   const handleMenuToggle = () => {
     setSidebarOpen(!sidebarOpen)
   }
+  
   const handleNewNote = () => {
-    // 새 메모 생성 - 상태 초기화
-    setSelectedNoteId('')
+    setSelectedNoteId(v4())
     setNoteTitle('')
     setNoteTags([])
     setNoteContent('')
-    setEditorKey(prev => prev + 1) // 에디터 재마운트를 위해 key 변경
+    setEditorKey(prev => prev + 1)
+
     console.log('새 메모 작성')
   }
+
   const handleSaveNote = () => {
-    // 현재 에디터의 마크다운 내용 가져오기
     const markdown = editorRef.current?.getMarkdown() || ''
-    
-    // TODO: API 호출로 노트 저장
-    const noteData = {
-      id: selectedNoteId || undefined, // 새 노트면 undefined
-      title: noteTitle || '제목 없음',
-      content: markdown,
+    writeNote({
+      uuid: selectedNoteId,
+      title: noteTitle,
       tags: noteTags,
-      updatedAt: new Date().toISOString(),
-    }
-    
-    console.log('저장할 노트 데이터:', noteData)
-    // 여기에 실제 API 호출 로직 구현
+      body: markdown
+    })
   }
+
   const handleNoteSelect = (noteId: string) => {
     setSelectedNoteId(noteId)
-    
-    // TODO: API 호출로 선택된 노트 불러오기
-    console.log('메모 선택:', noteId)
-    
-    // 임시 데이터 (실제로는 API에서 받아온 데이터로 대체)
-    // const loadedNote = await loadNoteFromAPI(noteId)
-    // setNoteTitle(loadedNote.title)
-    // setNoteTags(loadedNote.tags)
-    // setNoteContent(loadedNote.content)
-    // setEditorKey(prev => prev + 1) // 노트 로드 시에도 에디터 재마운트
+
+    getNote(noteId).then(note => {
+      if (note.data) {
+        setNoteTitle(note.data.title || '')
+        setNoteTags(note.data.tags || [])
+        setNoteContent(note.data.body || '') 
+      }
+      setEditorKey(prev => prev + 1)
+      console.log('메모 선택:', noteId)
+    })
   }
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {

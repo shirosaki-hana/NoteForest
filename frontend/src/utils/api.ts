@@ -36,7 +36,6 @@ export async function writeNote(note: {
   title: string;
   tags: string[];
   body: string;
-  createdAt?: string;
 }): Promise<WriteResponse> {
   return apiCall<WriteResponse>('/write', {
     method: 'POST',

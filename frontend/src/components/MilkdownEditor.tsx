@@ -24,6 +24,10 @@ export const MilkdownEditor = forwardRef<MilkdownEditorRef, MilkdownEditorProps>
       const crepe = new Crepe({
         root,
         defaultValue: value,
+        features: {
+          [Crepe.Feature.Toolbar]: false,
+          [Crepe.Feature.BlockEdit]: false,
+        },
         featureConfigs: {
           [Crepe.Feature.Placeholder]: {
             text: placeholder,
