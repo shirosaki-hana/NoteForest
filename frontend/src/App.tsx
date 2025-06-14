@@ -7,7 +7,8 @@ import {
 } from '@mui/material'
 import Header from './components/Header'
 import Sidebar from './components/Sidebar'
-import MilkdownEditor from './components/MilkdownEditor'
+import { MilkdownEditor } from './components/MilkdownEditor'
+import { MilkdownProvider } from '@milkdown/react' // MilkdownProvider 임포트 추가
 
 // 다크 테마 설정
 const theme = createTheme({
@@ -86,18 +87,15 @@ function App() {
               flex: 1,
               m: 2,
               background: 'linear-gradient(145deg, #1e1e2e, #262640)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              borderRadius: 3,
-              overflow: 'hidden',
+              borderRadius: 0,
+              overflow: 'auto',
               display: 'flex',
               flexDirection: 'column',
             }}
           >
-            <MilkdownEditor 
-              onContentChange={(content) => {
-                console.log('에디터 내용 변경:', content.slice(0, 100) + '...');
-              }}
-            />
+            <MilkdownProvider>
+              <MilkdownEditor/>
+            </MilkdownProvider>
           </Paper>
         </Box>
       </Box>
