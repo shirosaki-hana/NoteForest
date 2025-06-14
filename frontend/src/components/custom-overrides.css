@@ -1,6 +1,6 @@
 .milkdown {
   .ProseMirror {
-    padding: 1px 15px;
+    padding: 2px 15px;
 
     *::selection {
       background: var(--crepe-color-selected);

@@ -4,6 +4,7 @@ import {
   Typography,
   IconButton,
   Box,
+  CircularProgress,
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -15,9 +16,10 @@ interface HeaderProps {
   onMenuToggle: () => void;
   onNewNote?: () => void;
   onSaveNote?: () => void;
+  saving?: boolean;
 }
 
-export default function Header({ onMenuToggle, onNewNote, onSaveNote }: HeaderProps) {
+export default function Header({ onMenuToggle, onNewNote, onSaveNote, saving = false }: HeaderProps) {
   return (
     <AppBar 
       position="fixed" 
@@ -65,16 +67,29 @@ export default function Header({ onMenuToggle, onNewNote, onSaveNote }: HeaderPr
           color="inherit"
           aria-label="save note"
           onClick={onSaveNote}
+          disabled={saving}
           sx={{ 
             mr: 1,
-            color: '#e1e2e8', // on-surface color
+            color: saving ? '#8d9199' : '#e1e2e8', // on-surface color, muted when saving
             '&:hover': {
-              backgroundColor: '#1d2024', // hover color
-              color: '#9ccc65', // success color
+              backgroundColor: saving ? 'transparent' : '#1d2024', // hover color
+              color: saving ? '#8d9199' : '#9ccc65', // success color
+            },
+            '&:disabled': {
+              color: '#8d9199',
             }
           }}
         >
-          <SaveIcon />
+          {saving ? (
+            <CircularProgress 
+              size={20} 
+              sx={{ 
+                color: '#8d9199' 
+              }} 
+            />
+          ) : (
+            <SaveIcon />
+          )}
         </IconButton>
 
         <IconButton
