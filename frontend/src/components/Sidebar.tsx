@@ -10,7 +10,6 @@ import {
   Chip,
   IconButton,
   Divider,
-  alpha,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -143,35 +142,38 @@ export default function Sidebar({ isOpen, onToggle, selectedNoteId, onNoteSelect
       return date.toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' });
     }
   };
-
   const drawerContent = (
     <Box sx={{ 
       width: SIDEBAR_WIDTH, 
       height: '100%',
-      background: 'linear-gradient(145deg, #1e1e2e, #262640)',
-      color: '#f0f0f0'
+      backgroundColor: '#111418', // surface color
+      color: '#f8f9ff' // on-background color
     }}>
       {/* 헤더 */}
       <Box sx={{ 
         p: 2, 
-        borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+        borderBottom: '1px solid #32353a', // divider
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between'
       }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <NoteIcon sx={{ color: '#64b5f6' }} />
-          <Typography variant="h6" sx={{ fontWeight: 600 }}>
+          <NoteIcon sx={{ color: '#a1c9fd' }} /> {/* primary color */}
+          <Typography variant="h6" sx={{ 
+            fontWeight: 600, 
+            color: '#f8f9ff',
+            fontFamily: 'Rubik, Cambria, "Times New Roman", Times, serif'
+          }}>
             메모 목록
           </Typography>
         </Box>
         <IconButton 
           onClick={onToggle}
           sx={{ 
-            color: '#a0a0b2',
+            color: '#c3c6cf', // on-surface-variant
             '&:hover': { 
-              backgroundColor: alpha('#fff', 0.05),
-              color: '#f0f0f0'
+              backgroundColor: '#1d2024', // hover color
+              color: '#e1e2e8' // on-surface
             }
           }}
         >
@@ -181,28 +183,29 @@ export default function Sidebar({ isOpen, onToggle, selectedNoteId, onNoteSelect
 
       {/* 메모 개수 */}
       <Box sx={{ p: 2, pb: 1 }}>
-        <Typography variant="body2" sx={{ color: '#a0a0b2' }}>
+        <Typography variant="body2" sx={{ color: '#c3c6cf' }}> {/* on-surface-variant */}
           총 {notes.length}개의 메모
         </Typography>
       </Box>
 
-      <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.1)' }} />
+      <Divider sx={{ borderColor: '#32353a' }} /> {/* divider */}
 
       {/* 메모 목록 */}
       <Box sx={{ flexGrow: 1, overflow: 'auto' }}>
         {loading ? (
           <Box sx={{ p: 3, textAlign: 'center' }}>
-            <Typography sx={{ color: '#a0a0b2' }}>로딩 중...</Typography>
+            <Typography sx={{ color: '#c3c6cf' }}>로딩 중...</Typography>
           </Box>
         ) : error ? (
           <Box sx={{ p: 3, textAlign: 'center' }}>
-            <Typography sx={{ color: '#ef5350' }}>{error}</Typography>
+            <Typography sx={{ color: '#ffb4ab' }}>{error}</Typography> {/* error color */}
           </Box>
         ) : notes.length === 0 ? (
           <Box sx={{ p: 3, textAlign: 'center' }}>
-            <Typography sx={{ color: '#a0a0b2' }}>메모가 없습니다.</Typography>
+            <Typography sx={{ color: '#c3c6cf' }}>메모가 없습니다.</Typography>
           </Box>
-        ) : (          <List sx={{ p: 0 }}>
+        ) : (
+          <List sx={{ p: 0 }}>
             {notes.map((note) => (
               <ListItem key={note.uuid} disablePadding>
                 <ListItemButton
@@ -211,13 +214,13 @@ export default function Sidebar({ isOpen, onToggle, selectedNoteId, onNoteSelect
                   sx={{
                     px: 2,
                     py: 1.5,
-                    borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+                    borderBottom: '1px solid #191c20', // surface-low
                     '&.Mui-selected': {
-                      background: 'linear-gradient(135deg, rgba(100, 181, 246, 0.15), rgba(129, 199, 132, 0.15))',
-                      borderLeft: '3px solid #64b5f6',
+                      backgroundColor: '#32353a', // selected color
+                      borderLeft: '3px solid #a1c9fd', // primary color
                     },
                     '&:hover': {
-                      backgroundColor: alpha('#fff', 0.05),
+                      backgroundColor: '#1d2024', // hover color
                     },
                   }}
                 >
@@ -226,7 +229,7 @@ export default function Sidebar({ isOpen, onToggle, selectedNoteId, onNoteSelect
                       <Typography 
                         variant="subtitle2" 
                         sx={{ 
-                          color: '#f0f0f0', 
+                          color: '#f8f9ff', // on-background
                           fontWeight: 500,
                           mb: 0.5,
                           overflow: 'hidden',
@@ -250,8 +253,8 @@ export default function Sidebar({ isOpen, onToggle, selectedNoteId, onNoteSelect
                                 sx={{
                                   height: 20,
                                   fontSize: '0.75rem',
-                                  backgroundColor: alpha('#64b5f6', 0.2),
-                                  color: '#90caf9',
+                                  backgroundColor: '#32353a', // selected color
+                                  color: '#a1c9fd', // primary color
                                   '& .MuiChip-label': { px: 1 }
                                 }}
                               />
@@ -263,8 +266,8 @@ export default function Sidebar({ isOpen, onToggle, selectedNoteId, onNoteSelect
                                 sx={{
                                   height: 20,
                                   fontSize: '0.75rem',
-                                  backgroundColor: alpha('#a0a0b2', 0.2),
-                                  color: '#a0a0b2',
+                                  backgroundColor: '#32353a', // selected color
+                                  color: '#8d9199', // outline color
                                   '& .MuiChip-label': { px: 1 }
                                 }}
                               />
@@ -274,10 +277,10 @@ export default function Sidebar({ isOpen, onToggle, selectedNoteId, onNoteSelect
                         
                         {/* 날짜 정보 */}
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                          <ScheduleIcon sx={{ fontSize: '0.75rem', color: '#7a7a8a' }} />
+                          <ScheduleIcon sx={{ fontSize: '0.75rem', color: '#8d9199' }} /> {/* outline color */}
                           <Typography 
                             variant="caption" 
-                            sx={{ color: '#7a7a8a' }}
+                            sx={{ color: '#8d9199' }} // outline color
                           >
                             {formatDate(note.updatedAt)}
                           </Typography>
@@ -292,12 +295,12 @@ export default function Sidebar({ isOpen, onToggle, selectedNoteId, onNoteSelect
                     onClick={(e) => handleDeleteClick(note, e)}
                     sx={{
                       ml: 1,
-                      color: '#7a7a8a',
+                      color: '#8d9199', // outline color
                       opacity: 0.7,
                       transition: 'all 0.2s ease',
                       '&:hover': {
-                        color: '#ef5350',
-                        backgroundColor: alpha('#ef5350', 0.1),
+                        color: '#ffb4ab', // error color
+                        backgroundColor: 'rgba(255, 180, 171, 0.1)', // error with opacity
                         opacity: 1,
                         transform: 'scale(1.1)',
                       },
@@ -313,9 +316,9 @@ export default function Sidebar({ isOpen, onToggle, selectedNoteId, onNoteSelect
       </Box>
     </Box>
   );
-
   return (
-    <>      {/* 모든 화면 크기에서 임시 드로어 (오버레이 방식) */}
+    <>
+      {/* 모든 화면 크기에서 임시 드로어 (오버레이 방식) */}
       <Drawer
         variant="temporary"
         open={isOpen}
@@ -328,33 +331,32 @@ export default function Sidebar({ isOpen, onToggle, selectedNoteId, onNoteSelect
             boxSizing: 'border-box',
             width: SIDEBAR_WIDTH,
             border: 'none',
-            boxShadow: '0 25px 50px rgba(0, 0, 0, 0.5)',
+            backgroundColor: '#111418', // surface color
+            boxShadow: '0px 8px 32px rgba(0, 0, 0, 0.5)', // stronger shadow for overlay
           },
         }}
       >
         {drawerContent}
-      </Drawer>
-
-      {/* 삭제 확인 다이얼로그 */}
+      </Drawer>{/* 삭제 확인 다이얼로그 */}
       <Dialog
         open={deleteDialogOpen}
         onClose={handleDeleteCancel}
         PaperProps={{
           sx: {
-            background: 'linear-gradient(145deg, #1e1e2e, #262640)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
+            backgroundColor: '#111418', // surface color
+            border: '1px solid #32353a', // divider
             borderRadius: 3,
           }
         }}
       >
-        <DialogTitle sx={{ color: '#f0f0f0', pb: 1 }}>
+        <DialogTitle sx={{ color: '#f8f9ff', pb: 1 }}> {/* on-background */}
           메모 삭제
         </DialogTitle>
         <DialogContent>
-          <DialogContentText sx={{ color: '#a0a0b2', mb: 2 }}>
-            <strong style={{ color: '#f0f0f0' }}>"{noteToDelete?.title || '제목 없음'}"</strong> 메모를 정말 삭제하시겠습니까?
+          <DialogContentText sx={{ color: '#c3c6cf', mb: 2 }}> {/* on-surface-variant */}
+            <strong style={{ color: '#f8f9ff' }}>"{noteToDelete?.title || '제목 없음'}"</strong> 메모를 정말 삭제하시겠습니까?
           </DialogContentText>
-          <DialogContentText sx={{ color: '#ef5350', fontSize: '0.875rem' }}>
+          <DialogContentText sx={{ color: '#ffb4ab', fontSize: '0.875rem' }}> {/* error color */}
             이 작업은 되돌릴 수 없습니다.
           </DialogContentText>
         </DialogContent>
@@ -362,9 +364,9 @@ export default function Sidebar({ isOpen, onToggle, selectedNoteId, onNoteSelect
           <Button 
             onClick={handleDeleteCancel}
             sx={{ 
-              color: '#a0a0b2',
+              color: '#c3c6cf', // on-surface-variant
               '&:hover': {
-                backgroundColor: alpha('#fff', 0.05),
+                backgroundColor: '#1d2024', // hover color
               }
             }}
           >
@@ -374,12 +376,12 @@ export default function Sidebar({ isOpen, onToggle, selectedNoteId, onNoteSelect
             onClick={handleDeleteConfirm}
             disabled={deleting}
             sx={{
-              color: '#ef5350',
+              color: '#ffb4ab', // error color
               '&:hover': {
-                backgroundColor: alpha('#ef5350', 0.1),
+                backgroundColor: 'rgba(255, 180, 171, 0.1)', // error with opacity
               },
               '&:disabled': {
-                color: '#7a7a8a',
+                color: '#8d9199', // outline color
               }
             }}
           >
@@ -399,15 +401,20 @@ export default function Sidebar({ isOpen, onToggle, selectedNoteId, onNoteSelect
           onClose={handleSnackbarClose}
           severity={snackbarSeverity}
           sx={{
-            background: snackbarSeverity === 'success' 
-              ? 'linear-gradient(135deg, #4caf50, #388e3c)'
-              : 'linear-gradient(135deg, #ef5350, #d32f2f)',
-            color: '#fff',
+            backgroundColor: snackbarSeverity === 'success' 
+              ? '#1b2d1e' // success background
+              : '#2d1b1e', // error background
+            color: snackbarSeverity === 'success' 
+              ? '#a1c9fd' // primary color for success
+              : '#ffb4ab', // error color
+            border: snackbarSeverity === 'success'
+              ? '1px solid #2c4a2c'
+              : '1px solid #4a2c2c',
             '& .MuiAlert-icon': {
-              color: '#fff',
+              color: 'inherit',
             },
             '& .MuiAlert-action': {
-              color: '#fff',
+              color: 'inherit',
             }
           }}
         >

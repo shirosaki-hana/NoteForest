@@ -4,7 +4,6 @@ import {
   Typography,
   IconButton,
   Box,
-  alpha,
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -22,13 +21,12 @@ export default function Header({ onMenuToggle, onNewNote }: HeaderProps) {
       position="fixed" 
       sx={{ 
         zIndex: (theme) => theme.zIndex.drawer + 1,
-        background: 'linear-gradient(135deg, #0f0f23 0%, #1a1a3a 50%, #2d2d4f 100%)',
-        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
-        backdropFilter: 'blur(10px)',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+        backgroundColor: '#111418', // surface color
+        borderBottom: '1px solid #32353a', // divider
+        boxShadow: 'none',
       }}
     >
-      <Toolbar>
+      <Toolbar sx={{ minHeight: '64px !important' }}>
         <IconButton
           color="inherit"
           aria-label="toggle sidebar"
@@ -36,9 +34,9 @@ export default function Header({ onMenuToggle, onNewNote }: HeaderProps) {
           onClick={onMenuToggle}
           sx={{ 
             mr: 2,
-            color: '#f0f0f0',
+            color: '#e1e2e8', // on-surface color
             '&:hover': {
-              backgroundColor: alpha('#fff', 0.1),
+              backgroundColor: '#1d2024', // hover color
             }
           }}
         >
@@ -51,11 +49,12 @@ export default function Header({ onMenuToggle, onNewNote }: HeaderProps) {
             noWrap 
             component="div"
             sx={{ 
+              fontFamily: 'Rubik, Cambria, "Times New Roman", Times, serif',
               fontWeight: 600,
-              background: 'linear-gradient(135deg, #64b5f6 0%, #81c784 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
+              color: '#a1c9fd', // primary color
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
             }}
           >
             🌲 NoteForest
@@ -67,10 +66,10 @@ export default function Header({ onMenuToggle, onNewNote }: HeaderProps) {
           aria-label="new note"
           onClick={onNewNote}
           sx={{ 
-            color: '#f0f0f0',
+            color: '#e1e2e8', // on-surface color
             '&:hover': {
-              backgroundColor: alpha('#64b5f6', 0.2),
-              color: '#64b5f6',
+              backgroundColor: '#1d2024', // hover color
+              color: '#a1c9fd', // primary color
             }
           }}
         >

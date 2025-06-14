@@ -2,43 +2,117 @@ import { useState } from 'react'
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 import { 
   CssBaseline, 
-  Box, 
-  Paper,
+  Box,
 } from '@mui/material'
 import Header from './components/Header'
 import Sidebar from './components/Sidebar'
 import { MilkdownEditor } from './components/MilkdownEditor'
-import { MilkdownProvider } from '@milkdown/react' // MilkdownProvider 임포트 추가
+import { MilkdownProvider } from '@milkdown/react'
 
-// 다크 테마 설정
 const theme = createTheme({
-  palette: {
-    mode: 'dark',
-    primary: {
-      main: '#64b5f6',
-    },
-    secondary: {
-      main: '#81c784',
-    },
-    background: {
-      default: '#0f0f23',
-      paper: '#1e1e2e',
-    },
-    text: {
-      primary: '#f0f0f0',
-      secondary: '#a0a0b2',
-    },
-  },
-  typography: {
-    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif',
-  },
   components: {
     MuiCssBaseline: {
       styleOverrides: {
         body: {
-          background: 'linear-gradient(135deg, #0f0f23 0%, #1a1a3a 50%, #2d2d4f 100%)',
+          backgroundColor: '#1b1c1d',
+          color: '#f8f9ff',
           minHeight: '100vh',
-          backgroundAttachment: 'fixed',
+        },
+        '*::-webkit-scrollbar': {
+          width: '8px',
+        },
+        '*::-webkit-scrollbar-thumb': {
+          backgroundColor: '#32353a',
+          borderRadius: '4px',
+        },
+        '*::-webkit-scrollbar-track': {
+          backgroundColor: '#191c20',
+        },
+      },
+    },
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#111418',
+          backgroundImage: 'none',
+          borderBottom: '1px solid #32353a',
+        },
+      },
+    },
+    MuiDrawer: {
+      styleOverrides: {
+        paper: {
+          backgroundColor: '#111418',
+          borderRight: '1px solid #32353a',
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: 'none',
+          fontWeight: 500,
+          borderRadius: 6,
+        },
+      },
+    },
+    MuiIconButton: {
+      styleOverrides: {
+        root: {
+          '&:hover': {
+            backgroundColor: '#1d2024', // --crepe-color-hover
+          },
+        },
+      },
+    },
+    MuiListItemButton: {
+      styleOverrides: {
+        root: {
+          '&:hover': {
+            backgroundColor: '#1d2024',
+          },
+          '&.Mui-selected': {
+            backgroundColor: '#32353a',
+            '&:hover': {
+              backgroundColor: '#383b41',
+            },
+          },
+        },
+      },
+    },
+    MuiChip: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#32353a',
+          color: '#c3c6cf',
+          '& .MuiChip-deleteIcon': {
+            color: '#8d9199',
+            '&:hover': {
+              color: '#c3c6cf',
+            },
+          },
+        },
+      },
+    },
+    MuiDialog: {
+      styleOverrides: {
+        paper: {
+          backgroundColor: '#111418',
+          border: '1px solid #32353a',
+        },
+      },
+    },
+    MuiAlert: {
+      styleOverrides: {
+        standardError: {
+          backgroundColor: '#2d1b1e',
+          color: '#ffb4ab',
+          border: '1px solid #4a2c2c',
+        },
+        standardSuccess: {
+          backgroundColor: '#1b2d1e',
+          color: '#a1c9fd',
+          border: '1px solid #2c4a2c',
         },
       },
     },
@@ -47,6 +121,7 @@ const theme = createTheme({
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [selectedNoteId, setSelectedNoteId] = useState<string>('')
 
   const handleMenuToggle = () => {
     setSidebarOpen(!sidebarOpen)
@@ -57,6 +132,12 @@ function App() {
     console.log('새 메모 작성')
   }
 
+  const handleNoteSelect = (noteId: string) => {
+    setSelectedNoteId(noteId)
+    // TODO: 선택된 메모를 에디터에 로드
+    console.log('메모 선택:', noteId)
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -64,13 +145,12 @@ function App() {
         <Header 
           onMenuToggle={handleMenuToggle}
           onNewNote={handleNewNote}
-        />
-        <Sidebar 
+        />        <Sidebar 
           isOpen={sidebarOpen}
           onToggle={handleMenuToggle}
-        />
-
-        {/* 메인 콘텐츠 영역 - 에디터 */}
+          selectedNoteId={selectedNoteId}
+          onNoteSelect={handleNoteSelect}
+        />        {/* 메인 콘텐츠 영역 - 에디터 */}
         <Box
           component="main"
           sx={{
@@ -79,24 +159,12 @@ function App() {
             height: '100vh',
             display: 'flex',
             flexDirection: 'column',
+            backgroundColor: '#111418', // surface color (에디터 배경과 동일)
           }}
         >
-          <Paper 
-            elevation={0}
-            sx={{ 
-              flex: 1,
-              m: 2,
-              background: 'linear-gradient(145deg, #1e1e2e, #262640)',
-              borderRadius: 0,
-              overflow: 'auto',
-              display: 'flex',
-              flexDirection: 'column',
-            }}
-          >
-            <MilkdownProvider>
-              <MilkdownEditor/>
-            </MilkdownProvider>
-          </Paper>
+          <MilkdownProvider>
+            <MilkdownEditor/>
+          </MilkdownProvider>
         </Box>
       </Box>
     </ThemeProvider>

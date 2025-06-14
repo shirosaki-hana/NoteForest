@@ -1,10 +1,9 @@
 import type { FC } from "react";
-
 import { Crepe } from "@milkdown/crepe";
 import { Milkdown, useEditor } from "@milkdown/react";
 
 import "@milkdown/crepe/theme/common/style.css";
-import "@milkdown/crepe/theme/nord-dark.css";
+import "./custom-overrides.css";
 
 const markdown = `# Milkdown React Crepe
 
@@ -13,16 +12,18 @@ const markdown = `# Milkdown React Crepe
 This is a demo for using Crepe with **React**.`;
 
 export const MilkdownEditor: FC = () => {
+
+
   useEditor((root) => {
     const crepe = new Crepe({
       root,
       defaultValue: markdown,
-      features: {
-        [Crepe.Feature.Toolbar]: true,
-      },
     });
+    
     return crepe;
   }, []);
 
-  return <Milkdown />;
+  return (
+      <Milkdown />
+  );
 };
