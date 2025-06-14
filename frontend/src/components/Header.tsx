@@ -8,14 +8,16 @@ import {
 import {
   Menu as MenuIcon,
   Add as AddIcon,
+  Save as SaveIcon,
 } from '@mui/icons-material';
 
 interface HeaderProps {
   onMenuToggle: () => void;
   onNewNote?: () => void;
+  onSaveNote?: () => void;
 }
 
-export default function Header({ onMenuToggle, onNewNote }: HeaderProps) {
+export default function Header({ onMenuToggle, onNewNote, onSaveNote }: HeaderProps) {
   return (
     <AppBar 
       position="fixed" 
@@ -59,7 +61,21 @@ export default function Header({ onMenuToggle, onNewNote }: HeaderProps) {
           >
             🌲 NoteForest
           </Typography>
-        </Box>
+        </Box>        <IconButton
+          color="inherit"
+          aria-label="save note"
+          onClick={onSaveNote}
+          sx={{ 
+            mr: 1,
+            color: '#e1e2e8', // on-surface color
+            '&:hover': {
+              backgroundColor: '#1d2024', // hover color
+              color: '#9ccc65', // success color
+            }
+          }}
+        >
+          <SaveIcon />
+        </IconButton>
 
         <IconButton
           color="inherit"

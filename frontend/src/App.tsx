@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { ThemeProvider, createTheme } from '@mui/material/styles'
+import { useState, useRef, useEffect } from 'react'
+import { ThemeProvider } from '@mui/material/styles'
 import { 
   CssBaseline, 
   Box,
@@ -10,237 +10,81 @@ import {
 } from '@mui/material'
 import Header from './components/Header'
 import Sidebar from './components/Sidebar'
-import { MilkdownEditor } from './components/MilkdownEditor'
+import { MilkdownEditor, type MilkdownEditorRef } from './components/MilkdownEditor'
 import { MilkdownProvider } from '@milkdown/react'
-
-// MUI 테마 타입 확장
-declare module '@mui/material/styles' {
-  interface Palette {
-    milkdown: {
-      background: string;
-      onBackground: string;
-      surface: string;
-      surfaceLow: string;
-      onSurface: string;
-      onSurfaceVariant: string;
-      outline: string;
-      primary: string;
-      secondary: string;
-      onSecondary: string;
-      inverse: string;
-      onInverse: string;
-      inlineCode: string;
-      error: string;
-      hover: string;
-      selected: string;
-      inlineArea: string;
-    };
-  }
-
-  interface PaletteOptions {
-    milkdown?: {
-      background?: string;
-      onBackground?: string;
-      surface?: string;
-      surfaceLow?: string;
-      onSurface?: string;
-      onSurfaceVariant?: string;
-      outline?: string;
-      primary?: string;
-      secondary?: string;
-      onSecondary?: string;
-      inverse?: string;
-      onInverse?: string;
-      inlineCode?: string;
-      error?: string;
-      hover?: string;
-      selected?: string;
-      inlineArea?: string;
-    };
-  }
-}
-
-const theme = createTheme({
-  components: {
-    MuiCssBaseline: {
-      styleOverrides: {
-        body: {
-          backgroundColor: '#1b1c1d',
-          color: '#f8f9ff',
-          minHeight: '100vh',
-        },
-        '*::-webkit-scrollbar': {
-          width: '8px',
-        },
-        '*::-webkit-scrollbar-thumb': {
-          backgroundColor: '#32353a',
-          borderRadius: '4px',
-        },
-        '*::-webkit-scrollbar-track': {
-          backgroundColor: '#191c20',
-        },
-      },
-    },
-    MuiAppBar: {
-      styleOverrides: {
-        root: {
-          backgroundColor: '#111418',
-          backgroundImage: 'none',
-          borderBottom: '1px solid #32353a',
-        },
-      },
-    },
-    MuiDrawer: {
-      styleOverrides: {
-        paper: {
-          backgroundColor: '#111418',
-          borderRight: '1px solid #32353a',
-        },
-      },
-    },
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          textTransform: 'none',
-          fontWeight: 500,
-          borderRadius: 6,
-        },
-      },
-    },
-    MuiIconButton: {
-      styleOverrides: {
-        root: {
-          '&:hover': {
-            backgroundColor: '#1d2024', // --crepe-color-hover
-          },
-        },
-      },
-    },
-    MuiListItemButton: {
-      styleOverrides: {
-        root: {
-          '&:hover': {
-            backgroundColor: '#1d2024',
-          },
-          '&.Mui-selected': {
-            backgroundColor: '#32353a',
-            '&:hover': {
-              backgroundColor: '#383b41',
-            },
-          },
-        },
-      },
-    },
-    MuiChip: {
-      styleOverrides: {
-        root: {
-          backgroundColor: '#32353a',
-          color: '#c3c6cf',
-          '& .MuiChip-deleteIcon': {
-            color: '#8d9199',
-            '&:hover': {
-              color: '#c3c6cf',
-            },
-          },
-        },
-      },
-    },
-    MuiDialog: {
-      styleOverrides: {
-        paper: {
-          backgroundColor: '#111418',
-          border: '1px solid #32353a',
-        },
-      },
-    },    MuiAlert: {
-      styleOverrides: {
-        standardError: {
-          backgroundColor: '#2d1b1e',
-          color: '#ffb4ab',
-          border: '1px solid #4a2c2c',
-        },
-        standardSuccess: {
-          backgroundColor: '#1b2d1e',
-          color: '#a1c9fd',
-          border: '1px solid #2c4a2c',
-        },
-      },
-    },
-  },
-  palette: {
-    mode: 'dark',
-    primary: {
-      main: '#a1c9fd',
-    },
-    secondary: {
-      main: '#3c4858',
-    },
-    background: {
-      default: '#111418',
-      paper: '#191c20',
-    },
-    text: {
-      primary: '#f8f9ff',
-      secondary: '#e1e2e8',
-    },
-    error: {
-      main: '#ffb4ab',
-    },
-    // Milkdown용 커스텀 색상들
-    milkdown: {
-      background: '#111418',
-      onBackground: '#f8f9ff',
-      surface: '#111418',
-      surfaceLow: '#191c20',
-      onSurface: '#e1e2e8',
-      onSurfaceVariant: '#c3c6cf',
-      outline: '#8d9199',
-      primary: '#a1c9fd',
-      secondary: '#3c4858',
-      onSecondary: '#d7e3f8',
-      inverse: '#e1e2e8',
-      onInverse: '#2e3135',
-      inlineCode: '#ffb4ab',
-      error: '#ffb4ab',
-      hover: '#1d2024',
-      selected: '#32353a',
-      inlineArea: '#111418',
-    },
-  },
-})
+import { theme } from './theme'
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [selectedNoteId, setSelectedNoteId] = useState<string>('')
   const [noteTitle, setNoteTitle] = useState<string>('')
   const [noteTags, setNoteTags] = useState<string[]>([])
+  const [noteContent, setNoteContent] = useState<string>('')
+  const [editorKey, setEditorKey] = useState<number>(0) // 에디터 재마운트를 위한 key
+  const editorRef = useRef<MilkdownEditorRef>(null)
 
   const handleMenuToggle = () => {
     setSidebarOpen(!sidebarOpen)
   }
   const handleNewNote = () => {
-    // TODO: 새 메모 작성 기능 구현
+    // 새 메모 생성 - 상태 초기화
+    setSelectedNoteId('')
+    setNoteTitle('')
+    setNoteTags([])
+    setNoteContent('')
+    setEditorKey(prev => prev + 1) // 에디터 재마운트를 위해 key 변경
     console.log('새 메모 작성')
   }
-
   const handleSaveNote = () => {
-    // TODO: 메모 저장 기능 구현
-    console.log('메모 저장')
+    // 현재 에디터의 마크다운 내용 가져오기
+    const markdown = editorRef.current?.getMarkdown() || ''
+    
+    // TODO: API 호출로 노트 저장
+    const noteData = {
+      id: selectedNoteId || undefined, // 새 노트면 undefined
+      title: noteTitle || '제목 없음',
+      content: markdown,
+      tags: noteTags,
+      updatedAt: new Date().toISOString(),
+    }
+    
+    console.log('저장할 노트 데이터:', noteData)
+    // 여기에 실제 API 호출 로직 구현
   }
-
   const handleNoteSelect = (noteId: string) => {
     setSelectedNoteId(noteId)
-    // TODO: 선택된 메모를 에디터에 로드
+    
+    // TODO: API 호출로 선택된 노트 불러오기
     console.log('메모 선택:', noteId)
+    
+    // 임시 데이터 (실제로는 API에서 받아온 데이터로 대체)
+    // const loadedNote = await loadNoteFromAPI(noteId)
+    // setNoteTitle(loadedNote.title)
+    // setNoteTags(loadedNote.tags)
+    // setNoteContent(loadedNote.content)
+    // setEditorKey(prev => prev + 1) // 노트 로드 시에도 에디터 재마운트
   }
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNoteTitle(event.target.value)
   }
-
   const handleTagsChange = (_event: any, newValue: string[]) => {
     setNoteTags(newValue)
   }
+  // 키보드 단축키 처리 (Ctrl+S로 저장)
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.key === 's') {
+        event.preventDefault()
+        handleSaveNote()
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [noteTitle, noteTags, selectedNoteId])
 
   return (
     <ThemeProvider theme={theme}>
@@ -375,12 +219,14 @@ function App() {
                 )}
               />
             </Stack>
-          </Box>
-
-          {/* 에디터 영역 */}
-          <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-            <MilkdownProvider>
-              <MilkdownEditor/>
+          </Box>          {/* 에디터 영역 */}
+          <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>            <MilkdownProvider>
+              <MilkdownEditor
+                key={editorKey}
+                ref={editorRef}
+                value={noteContent}
+                placeholder="여기에 노트를 작성하세요..."
+              />
             </MilkdownProvider>
           </Box>
         </Box>

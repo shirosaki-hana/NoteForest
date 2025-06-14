@@ -1,4 +1,4 @@
-import type { FC } from "react";
+import { useRef, useImperativeHandle, forwardRef } from "react";
 import { Crepe } from "@milkdown/crepe";
 import { Milkdown, useEditor } from "@milkdown/react";
 import { useTheme } from '@mui/material/styles';
@@ -7,23 +7,42 @@ import { Box } from '@mui/material';
 import "@milkdown/crepe/theme/common/style.css";
 import "./custom-overrides.css";
 
-const markdown = `# Milkdown React Crepe
+interface MilkdownEditorProps {
+  value?: string;
+  placeholder?: string;
+}
 
-> You're scared of a world where you're needed.
+export interface MilkdownEditorRef {
+  getMarkdown: () => string;
+  setReadonly: (readonly: boolean) => void;
+}
 
-This is a demo for using Crepe with **React**.`;
-
-export const MilkdownEditor: FC = () => {
-  const theme = useTheme();
-
-  useEditor((root) => {
-    const crepe = new Crepe({
-      root,
-      defaultValue: markdown,
-    });
-    
-    return crepe;
-  }, []);
+export const MilkdownEditor = forwardRef<MilkdownEditorRef, MilkdownEditorProps>(
+  ({ value = "", placeholder = "여기에 노트를 작성하세요..." }, ref) => {
+    const theme = useTheme();
+    const crepeRef = useRef<Crepe | null>(null);    useEditor((root) => {
+      const crepe = new Crepe({
+        root,
+        defaultValue: value,
+        featureConfigs: {
+          [Crepe.Feature.Placeholder]: {
+            text: placeholder,
+          },
+        },
+      });
+      
+      crepeRef.current = crepe;
+      
+      return crepe;
+    }, [value, placeholder]);    // ref를 통해 외부에서 접근 가능한 메서드들 노출
+    useImperativeHandle(ref, () => ({
+      getMarkdown: () => {
+        return crepeRef.current?.getMarkdown() || "";
+      },
+      setReadonly: (readonly: boolean) => {
+        crepeRef.current?.setReadonly(readonly);
+      },
+    }), []);
 
   return (
     <Box
@@ -50,9 +69,10 @@ export const MilkdownEditor: FC = () => {
           '--crepe-font-default': 'Inter, Arial, Helvetica, sans-serif',
           '--crepe-font-code': '"JetBrains Mono", Menlo, Monaco, "Courier New", Courier, monospace',
         },
-      }}
-    >
+      }}    >
       <Milkdown />
     </Box>
   );
-};
+});
+
+MilkdownEditor.displayName = 'MilkdownEditor';
