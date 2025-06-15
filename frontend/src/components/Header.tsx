@@ -13,6 +13,8 @@ import {
   Logout as LogoutIcon,
 } from '@mui/icons-material';
 import { useAuth } from '../hooks/useAuth';
+import { useState } from 'react';
+import NewNoteConfirmDialog from './NewNoteConfirmDialog';
 
 interface HeaderProps {
   onMenuToggle: () => void;
@@ -23,6 +25,20 @@ interface HeaderProps {
 
 export default function Header({ onMenuToggle, onNewNote, onSaveNote, saving = false }: HeaderProps) {
   const { logout } = useAuth();
+  const [showNewNoteDialog, setShowNewNoteDialog] = useState(false);
+
+  const handleNewNoteClick = () => {
+    setShowNewNoteDialog(true);
+  };
+
+  const handleNewNoteConfirm = () => {
+    setShowNewNoteDialog(false);
+    onNewNote?.();
+  };
+
+  const handleNewNoteCancel = () => {
+    setShowNewNoteDialog(false);
+  };
 
   return (
     <AppBar 
@@ -97,7 +113,7 @@ export default function Header({ onMenuToggle, onNewNote, onSaveNote, saving = f
         </IconButton>        <IconButton
           color="inherit"
           aria-label="new note"
-          onClick={onNewNote}
+          onClick={handleNewNoteClick}
           sx={{ 
             mr: 1,
             color: '#e1e2e8', // on-surface color
@@ -122,9 +138,14 @@ export default function Header({ onMenuToggle, onNewNote, onSaveNote, saving = f
             }
           }}
         >
-          <LogoutIcon />
-        </IconButton>
+          <LogoutIcon />        </IconButton>
       </Toolbar>
+      
+      <NewNoteConfirmDialog
+        open={showNewNoteDialog}
+        onConfirm={handleNewNoteConfirm}
+        onCancel={handleNewNoteCancel}
+      />
     </AppBar>
   );
 }

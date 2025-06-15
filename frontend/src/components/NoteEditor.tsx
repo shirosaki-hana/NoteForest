@@ -198,18 +198,14 @@ export default function NoteEditor({
               src="/mascot.svg"
               alt="NoteForest Mascot"
               sx={{
-                position: 'absolute',
-                bottom: 20,
-                right: 20,
+                position: 'fixed',
+                bottom: 5,
+                right: 0,
                 width: 400,
                 height: 400,
                 opacity: 0.3,
                 zIndex: 1,
                 pointerEvents: 'none', // 클릭 방지
-                transition: 'opacity 0.3s ease',
-                '&:hover': {
-                  opacity: 0.9,
-                },
               }}
             />
           </Box>
