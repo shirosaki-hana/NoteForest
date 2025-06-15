@@ -1,34 +1,85 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { ThemeProvider } from '@mui/material/styles'
+import { CssBaseline, Box } from '@mui/material'
+import Header from './components/Header'
+import Sidebar from './components/Sidebar'
+import NoteEditor from './components/NoteEditor'
+import NotificationSnackbar from './components/NotificationSnackbar'
+import { theme } from './theme'
+import { useNoteManagement } from './hooks/useNoteManagement'
+import { useSnackbar } from './hooks/useSnackbar'
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  
+  // 스낵바 관리
+  const { snackbarOpen, snackbarMessage, snackbarSeverity, showSnackbar, handleSnackbarClose } = useSnackbar()
+  
+  // 노트 관리
+  const {
+    selectedNoteId,
+    noteTitle,
+    noteTags,
+    noteContent,
+    editorKey,
+    saving,
+    loading,
+    editorRef,
+    handleNewNote,
+    handleSaveNote,
+    handleNoteSelect,
+    handleTitleChange,
+    handleTagsChange,
+  } = useNoteManagement(showSnackbar)
+  
+  // 키보드 단축키
+  useKeyboardShortcuts({
+    onSave: handleSaveNote,
+    saving,
+  })
+
+  const handleMenuToggle = () => {
+    setSidebarOpen(!sidebarOpen)
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+        <Header 
+          onMenuToggle={handleMenuToggle}
+          onNewNote={handleNewNote}
+          onSaveNote={handleSaveNote}
+          saving={saving}
+        />
+        
+        <Sidebar 
+          isOpen={sidebarOpen}
+          onToggle={handleMenuToggle}
+          selectedNoteId={selectedNoteId}
+          onNoteSelect={handleNoteSelect}
+        />
+
+        <NoteEditor
+          noteTitle={noteTitle}
+          noteTags={noteTags}
+          noteContent={noteContent}
+          editorKey={editorKey}
+          loading={loading}
+          onTitleChange={handleTitleChange}
+          onTagsChange={handleTagsChange}
+          editorRef={editorRef}
+        />
+        
+        <NotificationSnackbar
+          open={snackbarOpen}
+          message={snackbarMessage}
+          severity={snackbarSeverity}
+          onClose={handleSnackbarClose}
+        />
+      </Box>
+    </ThemeProvider>
   )
 }
 
