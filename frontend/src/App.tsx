@@ -5,6 +5,7 @@ import Header from './components/Header'
 import Sidebar from './components/Sidebar'
 import NoteEditor from './components/NoteEditor'
 import NotificationSnackbar from './components/NotificationSnackbar'
+import PWAUpdatePrompt from './components/PWAUpdatePrompt'
 import { theme } from './theme'
 import { useNoteManagement } from './hooks/useNoteManagement'
 import { useSnackbar } from './hooks/useSnackbar'
@@ -71,13 +72,14 @@ function App() {
           onTagsChange={handleTagsChange}
           editorRef={editorRef}
         />
-        
-        <NotificationSnackbar
+          <NotificationSnackbar
           open={snackbarOpen}
           message={snackbarMessage}
           severity={snackbarSeverity}
           onClose={handleSnackbarClose}
         />
+        
+        <PWAUpdatePrompt />
       </Box>
     </ThemeProvider>
   )

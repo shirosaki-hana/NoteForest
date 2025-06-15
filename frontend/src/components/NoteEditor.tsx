@@ -175,16 +175,38 @@ export default function NoteEditor({
             <Typography variant="body2" sx={{ color: '#c3c6cf' }}>
               메모를 불러오는 중...
             </Typography>
-          </Box>
-        ) : (
-          <MilkdownProvider>
-            <MilkdownEditor
-              key={editorKey}
-              ref={editorRef}
-              value={noteContent}
-              placeholder="여기에 노트를 작성하세요..."
+          </Box>        ) : (
+          <Box sx={{ position: 'relative', flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+            <MilkdownProvider>
+              <MilkdownEditor
+                key={editorKey}
+                ref={editorRef}
+                value={noteContent}
+                placeholder="여기에 노트를 작성하세요..."
+              />
+            </MilkdownProvider>
+            
+            {/* 마스코트 이미지 - 우측 하단 고정 */}
+            <Box
+              component="img"
+              src="/mascot.svg"
+              alt="NoteForest Mascot"
+              sx={{
+                position: 'absolute',
+                bottom: 20,
+                right: 20,
+                width: 400,
+                height: 400,
+                opacity: 0.3,
+                zIndex: 1,
+                pointerEvents: 'none', // 클릭 방지
+                transition: 'opacity 0.3s ease',
+                '&:hover': {
+                  opacity: 0.9,
+                },
+              }}
             />
-          </MilkdownProvider>
+          </Box>
         )}
       </Box>
     </Box>

@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- 배경 -->
+  <rect width="512" height="512" rx="128" fill="#2e3440"/>
+  
+  <!-- 나무 아이콘 (심플한 버전) -->
+  <g transform="translate(256, 256)">
+    <!-- 나무 줄기 -->
+    <rect x="-15" y="80" width="30" height="80" fill="#5e81ac" rx="4"/>
+    
+    <!-- 나무 잎사귀 (3개 층) -->
+    <!-- 맨 아래층 -->
+    <ellipse cx="0" cy="40" rx="80" ry="40" fill="#8fbcbb"/>
+    
+    <!-- 중간층 -->
+    <ellipse cx="0" cy="0" rx="70" ry="35" fill="#88c0d0"/>
+    
+    <!-- 맨 위층 -->
+    <ellipse cx="0" cy="-40" rx="60" ry="30" fill="#81a1c1"/>
+    
+    <!-- 작은 잎사귀들 -->
+    <circle cx="-40" cy="20" r="15" fill="#a3be8c"/>
+    <circle cx="45" cy="10" r="12" fill="#a3be8c"/>
+    <circle cx="-25" cy="-20" r="10" fill="#a3be8c"/>
+    <circle cx="35" cy="-25" r="8" fill="#a3be8c"/>
+  </g>
+  
+  <!-- 노트 페이지들 (오른쪽 하단) -->
+  <g transform="translate(350, 350)">
+    <rect x="0" y="0" width="60" height="80" fill="#eceff4" rx="4" opacity="0.9"/>
+    <rect x="5" y="5" width="60" height="80" fill="#e5e9f0" rx="4" opacity="0.8"/>
+    <rect x="10" y="10" width="60" height="80" fill="#d8dee9" rx="4" opacity="0.7"/>
+    
+    <!-- 텍스트 라인들 -->
+    <line x1="20" y1="25" x2="55" y2="25" stroke="#4c566a" stroke-width="2" opacity="0.6"/>
+    <line x1="20" y1="35" x2="50" y2="35" stroke="#4c566a" stroke-width="2" opacity="0.6"/>
+    <line x1="20" y1="45" x2="60" y2="45" stroke="#4c566a" stroke-width="2" opacity="0.6"/>
+  </g>
+</svg>
