@@ -45,9 +45,180 @@ declare module '@mui/material/styles' {
       inlineArea?: string;
     };
   }
+
+  interface Theme {
+    milkdownStyles: {
+      [key: string]: any;
+    };
+  }
+
+  interface ThemeOptions {
+    milkdownStyles?: {
+      [key: string]: any;
+    };
+  }
 }
 
 export const theme = createTheme({
+  // Milkdown 커스텀 스타일 정의
+  milkdownStyles: {
+    '.milkdown': {
+      '& .ProseMirror': {
+        padding: '2px 15px',
+        // 자동 개행을 위한 스타일 추가
+        wordWrap: 'break-word',
+        wordBreak: 'break-word',
+        overflowWrap: 'break-word',
+        whiteSpace: 'pre-wrap',
+        maxWidth: '100%',
+        overflow: 'hidden',
+        '& *::selection': {
+          background: 'var(--crepe-color-selected)',
+        },
+        '& .ProseMirror-selectednode': {
+          background: 'color-mix(in srgb, var(--crepe-color-selected), transparent 60%)',
+          outline: 'none',
+          '&::selection, & ::selection': {
+            background: 'transparent',
+          },
+        },
+        '&[data-dragging="true"]': {
+          '& .ProseMirror-selectednode, &::selection, & *::selection': {
+            background: 'transparent',
+          },
+          '& input::selection': {
+            background: 'var(--crepe-color-selected)',
+          },
+        },
+        '& img': {
+          verticalAlign: 'bottom',
+          maxWidth: '100%',
+          '&.ProseMirror-selectednode': {
+            background: 'none',
+            outline: '2px solid var(--crepe-color-primary)',
+          },
+        },
+        '& h1, & h2, & h3, & h4, & h5, & h6': {
+          fontFamily: 'var(--crepe-font-title)',
+          fontWeight: 400,
+          padding: '2px 0',
+          wordWrap: 'break-word',
+          wordBreak: 'break-word',
+          overflowWrap: 'break-word',
+        },
+        '& h1': {
+          fontSize: '42px',
+          lineHeight: '50px',
+          marginTop: '32px',
+        },
+        '& h2': {
+          fontSize: '36px',
+          lineHeight: '44px',
+          marginTop: '28px',
+        },
+        '& h3': {
+          fontSize: '32px',
+          lineHeight: '40px',
+          marginTop: '24px',
+        },
+        '& h4': {
+          fontSize: '28px',
+          lineHeight: '36px',
+          marginTop: '20px',
+        },
+        '& h5': {
+          fontSize: '24px',
+          lineHeight: '32px',
+          marginTop: '16px',
+        },
+        '& h6': {
+          fontSize: '18px',
+          fontWeight: 700,
+          lineHeight: '28px',
+          marginTop: '16px',
+        },
+        '& p': {
+          fontSize: '16px',
+          lineHeight: '24px',
+          padding: '4px 0',
+          wordWrap: 'break-word',
+          wordBreak: 'break-word',
+          overflowWrap: 'break-word',
+        },
+        '& code': {
+          color: 'var(--crepe-color-inline-code)',
+          background: 'color-mix(in srgb, var(--crepe-color-inline-area), transparent 40%)',
+          fontFamily: 'var(--crepe-font-code)',
+          padding: '0 2px',
+          borderRadius: '4px',
+          fontSize: '87.5%',
+          display: 'inline-block',
+          lineHeight: 1.4286,
+          overflow: 'auto',
+          whiteSpace: 'pre-wrap',
+          wordBreak: 'break-all',
+        },
+        '& a': {
+          color: 'var(--crepe-color-primary)',
+          textDecoration: 'underline',
+        },
+        '& pre': {
+          background: 'color-mix(in srgb, var(--crepe-color-inline-area), transparent 40%)',
+          padding: '10px',
+          borderRadius: '4px',
+          whiteSpace: 'pre-wrap',
+          wordBreak: 'break-all',
+        },
+        '& blockquote': {
+          position: 'relative',
+          paddingLeft: '40px',
+          paddingTop: 0,
+          paddingBottom: 0,
+          boxSizing: 'content-box',
+          margin: '4px 0',
+          '&::before': {
+            content: '""',
+            width: '4px',
+            left: 0,
+            top: '4px',
+            bottom: '4px',
+            position: 'absolute',
+            background: 'var(--crepe-color-selected)',
+            borderRadius: '100px',
+          },
+          '& hr': {
+            marginBottom: '16px',
+          },
+        },
+        '& hr': {
+          border: 'none',
+          backgroundColor: 'color-mix(in srgb, var(--crepe-color-outline), transparent 80%)',
+          backgroundClip: 'content-box',
+          padding: '6px 0',
+          height: '13px',
+          position: 'relative',
+          '&.ProseMirror-selectednode': {
+            outline: 'none',
+            backgroundColor: 'color-mix(in srgb, var(--crepe-color-outline), transparent 20%)',
+            backgroundClip: 'content-box',
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              bottom: 0,
+              right: 0,
+              backgroundColor: 'color-mix(in srgb, var(--crepe-color-outline), transparent 80%)',
+              pointerEvents: 'none',
+            },
+          },
+        },
+        '& ul, & ol': {
+          padding: 0,
+        },
+      },
+    },
+  },
   components: {
     MuiCssBaseline: {
       styleOverrides: {

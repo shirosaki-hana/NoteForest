@@ -5,7 +5,6 @@ import { useTheme } from '@mui/material/styles';
 import { Box } from '@mui/material';
 
 import "@milkdown/crepe/theme/common/style.css";
-import "./custom-overrides.css";
 
 interface MilkdownEditorProps {
   value?: string;
@@ -47,7 +46,6 @@ export const MilkdownEditor = forwardRef<MilkdownEditorRef, MilkdownEditorProps>
         crepeRef.current?.setReadonly(readonly);
       },
     }), []);
-
   return (
     <Box
       sx={{
@@ -72,7 +70,17 @@ export const MilkdownEditor = forwardRef<MilkdownEditorRef, MilkdownEditorProps>
           '--crepe-font-title': 'Rubik, Cambria, "Times New Roman", Times, serif',
           '--crepe-font-default': 'Inter, Arial, Helvetica, sans-serif',
           '--crepe-font-code': '"JetBrains Mono", Menlo, Monaco, "Courier New", Courier, monospace',
+          '& .cm-editor': {
+            '& .cm-scroller': {
+              overflow: 'auto',
+            },
+            '& .cm-content, & .cm-line': {
+              whiteSpace: 'pre-wrap',
+              wordBreak: 'break-word',
+            },
+          },
         },
+        ...theme.milkdownStyles,
       }}    >
       <Milkdown />
     </Box>
