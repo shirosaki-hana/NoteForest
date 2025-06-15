@@ -116,69 +116,38 @@ export default function NoteEditor({
                 />
               ))
             }
-            renderInput={(params) => {
-              // 모바일 환경에서 Enter 키로 태그 추가가 안 되는 문제 개선
-              const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-                if (
-                  event.key === 'Enter' &&
-                  params.inputProps.value &&
-                  params.inputProps.value.trim() !== ''
-                ) {
-                  event.preventDefault();
-                  // 이미 있는 태그는 추가하지 않음
-                  if (!noteTags.includes(params.inputProps.value.trim())) {
-                    onTagsChange(event, [...noteTags, params.inputProps.value.trim()]);
-                  }
-                  // 입력란 비우기
-                  if (params.inputProps.onChange) {
-                    const fakeEvent = { ...event, target: { value: '' } };
-                    params.inputProps.onChange(fakeEvent as any);
-                  }
-                }
-                // 기존 onKeyDown도 호출
-                if (params.inputProps.onKeyDown) {
-                  params.inputProps.onKeyDown(event);
-                }
-              };
-              return (
-                <TextField
-                  {...params}
-                  variant="standard"
-                  placeholder="태그 추가..."
-                  InputProps={{
-                    ...params.InputProps,
-                    disableUnderline: true,
-                  }}
-                  inputProps={{
-                    ...params.inputProps,
-                    type: 'text',
-                    inputMode: 'text',
-                    onKeyDown: handleKeyDown,
-                  }}
-                  sx={{
-                    '& .MuiInput-root': {
-                      fontSize: '0.875rem',
-                      color: '#c3c6cf',
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                variant="standard"
+                placeholder="태그 추가..."
+                InputProps={{
+                  ...params.InputProps,
+                  disableUnderline: true,
+                }}
+                sx={{
+                  '& .MuiInput-root': {
+                    fontSize: '0.875rem',
+                    color: '#c3c6cf',
+                    backgroundColor: 'transparent',
+                    minHeight: 'auto',
+                    '&:hover': {
                       backgroundColor: 'transparent',
-                      minHeight: 'auto',
-                      '&:hover': {
-                        backgroundColor: 'transparent',
-                      },
-                      '&.Mui-focused': {
-                        backgroundColor: 'transparent',
-                      },
                     },
-                    '& input': {
-                      padding: '4px 0',
-                      '&::placeholder': {
-                        color: '#8d9199',
-                        opacity: 1,
-                      },
+                    '&.Mui-focused': {
+                      backgroundColor: 'transparent',
                     },
-                  }}
-                />
-              );
-            }}
+                  },
+                  '& input': {
+                    padding: '4px 0',
+                    '&::placeholder': {
+                      color: '#8d9199',
+                      opacity: 1,
+                    },
+                  },
+                }}
+              />
+            )}
           />
         </Stack>
       </Box>
