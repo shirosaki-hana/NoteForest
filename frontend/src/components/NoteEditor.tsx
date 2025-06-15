@@ -1,6 +1,7 @@
 import { Box, TextField, Chip, Stack, Autocomplete, CircularProgress, Typography } from '@mui/material'
 import { MilkdownEditor, type MilkdownEditorRef } from './MilkdownEditor'
 import { MilkdownProvider } from '@milkdown/react'
+import { useState } from 'react'
 
 interface NoteEditorProps {
   // 상태
@@ -28,6 +29,7 @@ export default function NoteEditor({
   onTagsChange,
   editorRef,
 }: NoteEditorProps) {
+  const [inputValue, setInputValue] = useState('')
   return (
     <Box
       component="main"
@@ -82,15 +84,19 @@ export default function NoteEditor({
               },
             }}
           />
-          
-          {/* 태그 입력 */}
+            {/* 태그 입력 */}
           <Autocomplete
             multiple
             freeSolo
             size="small"
             options={[]}
             value={noteTags}
-            onChange={onTagsChange}
+            inputValue={inputValue}            onInputChange={(_, newInputValue) => {
+              setInputValue(newInputValue)
+            }}            onChange={(event, newValue) => {
+              onTagsChange(event, newValue)
+              setInputValue('')
+            }}
             renderTags={(value, getTagProps) =>
               value.map((option, index) => (
                 <Chip
@@ -124,6 +130,18 @@ export default function NoteEditor({
                 InputProps={{
                   ...params.InputProps,
                   disableUnderline: true,
+                  onKeyDown: (e) => {
+                    // 모바일 환경에서 Enter 키 처리 개선
+                    if (e.key === 'Enter' && inputValue.trim()) {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      const newTag = inputValue.trim()
+                      if (!noteTags.includes(newTag)) {
+                        onTagsChange(null, [...noteTags, newTag])
+                      }
+                      setInputValue('')
+                    }
+                  },
                 }}
                 sx={{
                   '& .MuiInput-root': {
