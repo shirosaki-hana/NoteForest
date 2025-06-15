@@ -21,6 +21,7 @@
     "@types/react-dom": "^19.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-router-dom": "^7.6.2",
     "uuid": "^11.1.0"
   },
   "devDependencies": {

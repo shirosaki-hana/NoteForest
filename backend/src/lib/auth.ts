@@ -8,7 +8,6 @@ import { writelog } from './log';
 const SAVE_DIR = path.join(__dirname, '../../auth');
 const PASSWORD_FILE = path.join(SAVE_DIR, 'password.hash');
 const SESSION_FILE = path.join(SAVE_DIR, 'sessions.json');
-const TEMPLATES_DIR = path.join(__dirname, '../../templates');
 const SESSION_COOKIE = 'nf_session';
 const SESSION_TTL = 1000 * 60 * 60 * 24; // 24시간
 
@@ -19,45 +18,6 @@ const SESSION_TTL = 1000 * 60 * 60 * 24; // 24시간
     await fs.mkdir(SAVE_DIR, { recursive: true });
   }
 })();
-
-async function loadTemplate(templateName: string): Promise<string> { 
-  try {
-    const templatePath = path.join(TEMPLATES_DIR, templateName);
-    return await fs.readFile(templatePath, 'utf-8'); 
-  } catch {
-    return '<h1>페이지를 불러올 수 없습니다.</h1>';
-  }
-}
-
-function renderError(message: string): string {
-  return `<h1>오류</h1><p>${message}</p>`;
-}
-
-async function renderLoginWithError(errorMessage: string): Promise<string> { 
-  const template = await loadTemplate('login.html'); 
-  // 에러 메시지를 포함한 로그인 폼 반환
-  return template.replace(
-    '<h2><span class="security-icon">🔑</span>로그인</h2>',
-    `<h2><span class="security-icon">🔑</span>로그인</h2>
-    <div class="error-message">
-      <strong>⚠️ 오류</strong>
-      ${errorMessage}
-    </div>`
-  );
-}
-
-async function renderPasswordSetupWithError(errorMessage: string): Promise<string> { 
-  const template = await loadTemplate('password-setup.html'); 
-  // 에러 메시지를 포함한 비밀번호 설정 폼 반환
-  return template.replace(
-    '<h2><span class="security-icon">🔐</span>비밀번호 설정</h2>',
-    `<h2><span class="security-icon">🔐</span>비밀번호 설정</h2>
-    <div class="error-message">
-      <strong>⚠️ 오류</strong>
-      ${errorMessage}
-    </div>`
-  );
-}
 
 // 세션 관리 (메모리 + 파일)
 let sessions: Record<string, number> = {};
@@ -98,100 +58,106 @@ async function isValidSession(token: string | undefined): Promise<boolean> {
   return true;
 }
 
-// 인증 미들웨어
+function removeSession(token: string) {
+  delete sessions[token];
+  saveSessions();
+}
+
+// 인증 미들웨어 (API용)
 export async function requireAuth(req: Request, res: Response, next: NextFunction) { 
   const token = req.cookies[SESSION_COOKIE];
   if (await isValidSession(token)) return next(); 
-  res.redirect('/auth');
+  res.status(401).json({ error: 'Unauthorized' });
 }
 
-// 인증/비밀번호 설정 라우트
+// 인증 API 라우트
 export const authRouter = Router();
-authRouter.get('/', async (req: Request, res: Response) => { 
 
-    const clientIP = req.headers['x-forwarded-for'] || req.ip || req.socket.remoteAddress || 'Unknown IP';
-    writelog('Server', `Connection from: ${clientIP}`);
-
-  try {
-    await fs.access(PASSWORD_FILE); 
-    const template = await loadTemplate('login.html'); 
-    res.send(template);
-  } catch {
-    // PASSWORD_FILE이 없으면 설정 페이지로
-    const template = await loadTemplate('password-setup.html'); 
-    res.send(template);
+// 인증 상태 확인
+authRouter.get('/check', async (req: Request, res: Response) => {
+  const token = req.cookies[SESSION_COOKIE];
+  const isValid = await isValidSession(token);
+  
+  if (isValid) {
+    res.json({ authenticated: true });
+  } else {
+    res.status(401).json({ authenticated: false });
   }
 });
 
-authRouter.use(require('express').urlencoded({ extended: true }));
-authRouter.post('/set', async (req: Request, res: Response) => {
+// 비밀번호 설정 상태 확인
+authRouter.get('/status', async (req: Request, res: Response) => {
+  try {
+    await fs.access(PASSWORD_FILE);
+    res.json({ passwordSet: true });
+  } catch {
+    res.json({ passwordSet: false });
+  }
+});
 
+// 비밀번호 설정
+authRouter.post('/setup', async (req: Request, res: Response) => {
   const clientIP = req.headers['x-forwarded-for'] || req.ip || req.socket.remoteAddress || 'Unknown IP';
 
   try {
-    await fs.access(PASSWORD_FILE); 
-    // 파일이 존재하면 이미 설정된 것이므로 리다이렉트
-    res.redirect('/auth');
+    await fs.access(PASSWORD_FILE);
+    res.status(400).json({ error: '비밀번호가 이미 설정되어 있습니다.' });
     return;
   } catch {
     // 파일이 없으면 비밀번호 설정 진행
   }
 
-  const pw = req.body.pw;
+  const { password } = req.body;
 
-  if (!pw || pw.length < 8) {
-    res.send(await renderPasswordSetupWithError('비밀번호는 8자 이상이어야 합니다.')); // await 추가
+  if (!password || password.length < 8) {
+    res.status(400).json({ error: '비밀번호는 8자 이상이어야 합니다.' });
     return;
   }
 
   try {
-
     writelog('Auth', `Password set attempt from : ${clientIP}`);
-    const hash = await bcrypt.hash(pw, 10);
-    await fs.writeFile(PASSWORD_FILE, hash); // fs.writeFile 사용
+    const hash = await bcrypt.hash(password, 10);
+    await fs.writeFile(PASSWORD_FILE, hash);
     const token = createSession();
     res.cookie(SESSION_COOKIE, token, { httpOnly: true });
-    res.redirect('/');
+    res.json({ success: true });
 
-    writelog('Auth', `Login success from : ${clientIP}`);
+    writelog('Auth', `Password setup success from : ${clientIP}`);
     writelog('Auth', `Session created: ${token} for IP: ${clientIP}`);
-
-  } catch (e) { // 에러 객체 받기
-    console.error('Password set error:', e); // 에러 로깅
-    res.send(await renderPasswordSetupWithError('오류가 발생했습니다.')); // await 추가
+  } catch (e) {
+    console.error('Password set error:', e);
+    res.status(500).json({ error: '오류가 발생했습니다.' });
   }
 });
 
+// 로그인
 authRouter.post('/login', async (req: Request, res: Response) => {
-
   const clientIP = req.headers['x-forwarded-for'] || req.ip || req.socket.remoteAddress || 'Unknown IP';
 
   writelog('Auth', `Login attempt from : ${clientIP}`);
 
   try {
-    await fs.access(PASSWORD_FILE); // fs.access 사용
+    await fs.access(PASSWORD_FILE);
   } catch {
-    // PASSWORD_FILE이 없으면 설정 페이지로 리다이렉트
-    res.redirect('/auth');
+    res.status(400).json({ error: '비밀번호가 설정되지 않았습니다.' });
     return;
   }
 
   try {
+    const { password } = req.body;
 
-    const pw = req.body.pw;
-
-    if (!pw) {
+    if (!password) {
       writelog('Auth', `Login fail(password empty) from : ${clientIP}`);
-      res.send(await renderLoginWithError('비밀번호를 입력해주세요.')); // await 추가
+      res.status(400).json({ error: '비밀번호를 입력해주세요.' });
       return;
     }
 
-    const hash = await fs.readFile(PASSWORD_FILE, 'utf-8'); // fs.readFile 사용
-    const ok = await bcrypt.compare(pw, hash);
+    const hash = await fs.readFile(PASSWORD_FILE, 'utf-8');
+    const ok = await bcrypt.compare(password, hash);
 
     if (!ok) {
       writelog('Auth', `Login fail(wrong password) from : ${clientIP}`);
-      res.send(await renderLoginWithError('비밀번호가 틀렸습니다.')); // await 추가
+      res.status(401).json({ error: '비밀번호가 틀렸습니다.' });
       return;
     }
 
@@ -201,10 +167,19 @@ authRouter.post('/login', async (req: Request, res: Response) => {
     writelog('Auth', `Session created: ${token} for IP: ${clientIP}`);
 
     res.cookie(SESSION_COOKIE, token, { httpOnly: true });
-    res.redirect('/');
-
-  } catch (e) { // 에러 객체 받기
-    console.error('Login error:', e); // 에러 로깅
-    res.send(await renderLoginWithError('로그인 처리 중 오류가 발생했습니다.')); // await 추가
+    res.json({ success: true });
+  } catch (e) {
+    console.error('Login error:', e);
+    res.status(500).json({ error: '로그인 처리 중 오류가 발생했습니다.' });
   }
+});
+
+// 로그아웃
+authRouter.post('/logout', async (req: Request, res: Response) => {
+  const token = req.cookies[SESSION_COOKIE];
+  if (token) {
+    removeSession(token);
+  }
+  res.clearCookie(SESSION_COOKIE);
+  res.json({ success: true });
 });

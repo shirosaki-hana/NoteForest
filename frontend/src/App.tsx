@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { ThemeProvider } from '@mui/material/styles'
-import { CssBaseline, Box } from '@mui/material'
+import { CssBaseline, Box, CircularProgress } from '@mui/material'
+import { AuthProvider, useAuth } from './hooks/useAuth'
+import LoginPage from './components/LoginPage'
 import Header from './components/Header'
 import Sidebar from './components/Sidebar'
 import NoteEditor from './components/NoteEditor'
@@ -11,7 +13,8 @@ import { useNoteManagement } from './hooks/useNoteManagement'
 import { useSnackbar } from './hooks/useSnackbar'
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
 
-function App() {
+function AppContent() {
+  const { isAuthenticated, isLoading } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false)
   
   // 스낵바 관리
@@ -44,9 +47,27 @@ function App() {
     setSidebarOpen(!sidebarOpen)
   }
 
+  if (isLoading) {
+    return (
+      <Box 
+        display="flex" 
+        justifyContent="center" 
+        alignItems="center" 
+        minHeight="100vh"
+        bgcolor="background.default"
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <LoginPage />;
+  }
+
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
+    <>
+      <PWAUpdatePrompt />
       <Box sx={{ display: 'flex', minHeight: '100vh' }}>
         <Header 
           onMenuToggle={handleMenuToggle}
@@ -71,16 +92,25 @@ function App() {
           onTitleChange={handleTitleChange}
           onTagsChange={handleTagsChange}
           editorRef={editorRef}
-        />
-          <NotificationSnackbar
+        />        
+        <NotificationSnackbar
           open={snackbarOpen}
           message={snackbarMessage}
           severity={snackbarSeverity}
           onClose={handleSnackbarClose}
         />
-        
-        <PWAUpdatePrompt />
       </Box>
+    </>
+  )
+}
+
+function App() {
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
     </ThemeProvider>
   )
 }

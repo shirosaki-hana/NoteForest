@@ -10,7 +10,9 @@ import {
   Menu as MenuIcon,
   Add as AddIcon,
   Save as SaveIcon,
+  Logout as LogoutIcon,
 } from '@mui/icons-material';
+import { useAuth } from '../hooks/useAuth';
 
 interface HeaderProps {
   onMenuToggle: () => void;
@@ -20,6 +22,8 @@ interface HeaderProps {
 }
 
 export default function Header({ onMenuToggle, onNewNote, onSaveNote, saving = false }: HeaderProps) {
+  const { logout } = useAuth();
+
   return (
     <AppBar 
       position="fixed" 
@@ -90,13 +94,12 @@ export default function Header({ onMenuToggle, onNewNote, onSaveNote, saving = f
           ) : (
             <SaveIcon />
           )}
-        </IconButton>
-
-        <IconButton
+        </IconButton>        <IconButton
           color="inherit"
           aria-label="new note"
           onClick={onNewNote}
           sx={{ 
+            mr: 1,
             color: '#e1e2e8', // on-surface color
             '&:hover': {
               backgroundColor: '#1d2024', // hover color
@@ -105,6 +108,21 @@ export default function Header({ onMenuToggle, onNewNote, onSaveNote, saving = f
           }}
         >
           <AddIcon />
+        </IconButton>
+
+        <IconButton
+          color="inherit"
+          aria-label="logout"
+          onClick={logout}
+          sx={{ 
+            color: '#e1e2e8', // on-surface color
+            '&:hover': {
+              backgroundColor: '#1d2024', // hover color
+              color: '#f48fb1', // secondary color
+            }
+          }}
+        >
+          <LogoutIcon />
         </IconButton>
       </Toolbar>
     </AppBar>
