@@ -130,18 +130,6 @@ export default function NoteEditor({
                 InputProps={{
                   ...params.InputProps,
                   disableUnderline: true,
-                  onKeyDown: (e) => {
-                    // 모바일 환경에서 Enter 키 처리 개선
-                    if (e.key === 'Enter' && inputValue.trim()) {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      const newTag = inputValue.trim()
-                      if (!noteTags.includes(newTag)) {
-                        onTagsChange(null, [...noteTags, newTag])
-                      }
-                      setInputValue('')
-                    }
-                  },
                 }}
                 sx={{
                   '& .MuiInput-root': {
