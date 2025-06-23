@@ -299,14 +299,11 @@ export default function NoteEditor({
               alt="NoteForest Mascot"
               sx={{
                 position: 'absolute',
-                bottom: 20,
-                right: 20,
-                position: 'fixed',
                 bottom: 5,
                 right: 0,
                 width: 400,
                 height: 400,
-                opacity: 0.3,
+                opacity: 0.4,
                 zIndex: 1,
                 pointerEvents: 'none',
                 // 제발 마스코트 이미지 스타일 조정하지 마세요 
