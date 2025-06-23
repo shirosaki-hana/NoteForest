@@ -16,6 +16,7 @@ import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
 function AppContent() {
   const { isAuthenticated, isLoading } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [isEditMode, setIsEditMode] = useState(true)
   
   // 스낵바 관리
   const { snackbarOpen, snackbarMessage, snackbarSeverity, showSnackbar, handleSnackbarClose } = useSnackbar()
@@ -29,12 +30,12 @@ function AppContent() {
     editorKey,
     saving,
     loading,
-    editorRef,
     handleNewNote,
     handleSaveNote,
     handleNoteSelect,
     handleTitleChange,
     handleTagsChange,
+    handleContentChange,
   } = useNoteManagement(showSnackbar)
   
   // 키보드 단축키
@@ -45,6 +46,10 @@ function AppContent() {
 
   const handleMenuToggle = () => {
     setSidebarOpen(!sidebarOpen)
+  }
+
+  const handleToggleEditMode = () => {
+    setIsEditMode(!isEditMode)
   }
 
   if (isLoading) {
@@ -74,6 +79,8 @@ function AppContent() {
           onNewNote={handleNewNote}
           onSaveNote={handleSaveNote}
           saving={saving}
+          isEditMode={isEditMode}
+          onToggleEditMode={handleToggleEditMode}
         />
         
         <Sidebar 
@@ -89,9 +96,10 @@ function AppContent() {
           noteContent={noteContent}
           editorKey={editorKey}
           loading={loading}
+          isEditMode={isEditMode}
           onTitleChange={handleTitleChange}
           onTagsChange={handleTagsChange}
-          editorRef={editorRef}
+          onContentChange={handleContentChange}
         />        
         <NotificationSnackbar
           open={snackbarOpen}

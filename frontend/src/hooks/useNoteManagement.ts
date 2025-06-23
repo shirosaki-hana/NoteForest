@@ -1,7 +1,6 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { v4 } from 'uuid'
 import { writeNote, getNote } from '../utils/api'
-import type { MilkdownEditorRef } from '../components/MilkdownEditor'
 
 export interface UseNoteManagementReturn {
   // 상태
@@ -12,8 +11,6 @@ export interface UseNoteManagementReturn {
   editorKey: number
   saving: boolean
   loading: boolean
-    // Refs
-  editorRef: React.RefObject<MilkdownEditorRef | null>
   
   // 액션들
   handleNewNote: () => void
@@ -21,6 +18,7 @@ export interface UseNoteManagementReturn {
   handleNoteSelect: (noteId: string) => Promise<void>
   handleTitleChange: (event: React.ChangeEvent<HTMLInputElement>) => void
   handleTagsChange: (event: any, newValue: string[]) => void
+  handleContentChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void
   
   // 상태 설정 함수들 (필요한 경우)
   setNoteTitle: React.Dispatch<React.SetStateAction<string>>
@@ -38,7 +36,6 @@ export function useNoteManagement(
   const [editorKey, setEditorKey] = useState<number>(0)
   const [saving, setSaving] = useState(false)
   const [loading, setLoading] = useState(false)
-  const editorRef = useRef<MilkdownEditorRef>(null)
 
   // 최초 로드 시 새 메모 자동 생성
   useEffect(() => {
@@ -72,20 +69,19 @@ export function useNoteManagement(
       return
     }
     
-    if (!noteTitle.trim() && !editorRef.current?.getMarkdown().trim()) {
+    if (!noteTitle.trim() && !noteContent.trim()) {
       showSnackbar('제목이나 내용을 입력해주세요.', 'error')
       return
     }
     
     try {
       setSaving(true)
-      const markdown = editorRef.current?.getMarkdown() || ''
       
       const response = await writeNote({
         uuid: selectedNoteId,
         title: noteTitle.trim() || '제목 없음',
         tags: noteTags,
-        body: markdown
+        body: noteContent
       })
       
       if (response.success) {
@@ -153,6 +149,10 @@ export function useNoteManagement(
     setNoteTags(newValue)
   }
 
+  const handleContentChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setNoteContent(event.target.value)
+  }
+
   return {
     // 상태
     selectedNoteId,
@@ -163,15 +163,13 @@ export function useNoteManagement(
     saving,
     loading,
     
-    // Refs
-    editorRef,
-    
     // 액션들
     handleNewNote,
     handleSaveNote,
     handleNoteSelect,
     handleTitleChange,
     handleTagsChange,
+    handleContentChange,
     
     // 상태 설정 함수들
     setNoteTitle,

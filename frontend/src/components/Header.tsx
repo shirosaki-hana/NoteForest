@@ -11,6 +11,8 @@ import {
   Add as AddIcon,
   Save as SaveIcon,
   Logout as LogoutIcon,
+  Edit as EditIcon,
+  Visibility as VisibilityIcon,
 } from '@mui/icons-material';
 import { useAuth } from '../hooks/useAuth';
 import { useState } from 'react';
@@ -21,9 +23,18 @@ interface HeaderProps {
   onNewNote?: () => void;
   onSaveNote?: () => void;
   saving?: boolean;
+  isEditMode?: boolean;
+  onToggleEditMode?: () => void;
 }
 
-export default function Header({ onMenuToggle, onNewNote, onSaveNote, saving = false }: HeaderProps) {
+export default function Header({ 
+  onMenuToggle, 
+  onNewNote, 
+  onSaveNote, 
+  saving = false, 
+  isEditMode = true, 
+  onToggleEditMode 
+}: HeaderProps) {
   const { logout } = useAuth();
   const [showNewNoteDialog, setShowNewNoteDialog] = useState(false);
 
@@ -83,17 +94,35 @@ export default function Header({ onMenuToggle, onNewNote, onSaveNote, saving = f
           >
             🌲 NoteForest
           </Typography>
-        </Box>        <IconButton
+        </Box>        
+        
+        <IconButton
+          color="inherit"
+          aria-label={isEditMode ? "switch to preview mode" : "switch to edit mode"}
+          onClick={onToggleEditMode}
+          sx={{ 
+            mr: 1,
+            color: '#e1e2e8', // on-surface color
+            '&:hover': {
+              backgroundColor: '#1d2024', // hover color
+              color: isEditMode ? '#81c784' : '#ffb74d', // green for preview, orange for edit
+            }
+          }}
+        >
+          {isEditMode ? <VisibilityIcon /> : <EditIcon />}
+        </IconButton>
+
+        <IconButton
           color="inherit"
           aria-label="save note"
           onClick={onSaveNote}
-          disabled={saving}
+          disabled={saving || !isEditMode} // 읽기 모드에서는 저장 비활성화
           sx={{ 
             mr: 1,
-            color: saving ? '#8d9199' : '#e1e2e8', // on-surface color, muted when saving
+            color: saving || !isEditMode ? '#8d9199' : '#e1e2e8', // on-surface color, muted when saving or in read mode
             '&:hover': {
-              backgroundColor: saving ? 'transparent' : '#1d2024', // hover color
-              color: saving ? '#8d9199' : '#9ccc65', // success color
+              backgroundColor: (saving || !isEditMode) ? 'transparent' : '#1d2024', // hover color
+              color: (saving || !isEditMode) ? '#8d9199' : '#9ccc65', // success color
             },
             '&:disabled': {
               color: '#8d9199',
