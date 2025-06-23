@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { v4 } from 'uuid'
 import { writeNote, getNote } from '../utils/api'
+import { useLocalStorage } from './useLocalStorage'
+import { useDebounce } from './useDebounce'
 
 export interface UseNoteManagementReturn {
   // 상태
@@ -12,6 +14,10 @@ export interface UseNoteManagementReturn {
   saving: boolean
   loading: boolean
   
+  // Draft 관련
+  showDraftDialog: boolean
+  draftData: { title: string; tags: string[]; content: string; lastModified: number } | null
+  
   // 액션들
   handleNewNote: () => void
   handleSaveNote: () => Promise<void>
@@ -19,6 +25,11 @@ export interface UseNoteManagementReturn {
   handleTitleChange: (event: React.ChangeEvent<HTMLInputElement>) => void
   handleTagsChange: (event: any, newValue: string[]) => void
   handleContentChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void
+  
+  // Draft 관련 액션들
+  handleRestoreDraft: () => void
+  handleDiscardDraft: () => void
+  handleCancelDraftDialog: () => void
   
   // 상태 설정 함수들 (필요한 경우)
   setNoteTitle: React.Dispatch<React.SetStateAction<string>>
@@ -37,9 +48,69 @@ export function useNoteManagement(
   const [saving, setSaving] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  // 최초 로드 시 새 메모 자동 생성
+  // Draft 관련 상태
+  const [showDraftDialog, setShowDraftDialog] = useState(false)
+  const [draftData, setDraftData] = useState<{ title: string; tags: string[]; content: string; lastModified: number } | null>(null)
+
+  // localStorage 훅
+  const { saveDraft, loadDraft, clearDraft, cleanOldDrafts, getAllDraftKeys } = useLocalStorage()
+
+  // Debounced 자동 저장 (1초 후)
+  const debouncedSaveDraft = useDebounce((noteId: string, title: string, tags: string[], content: string) => {
+    if (noteId && (title.trim() || tags.length > 0 || content.trim())) {
+      saveDraft(noteId, title, tags, content)
+    }
+  }, 500)
+
+  // 최초 로드 시 로컬 저장소 확인 후 메모 복원 또는 신규 생성
   useEffect(() => {
     if (!selectedNoteId) {
+      // 7일 이상 된 오래된 draft들 먼저 정리
+      cleanOldDrafts()
+      
+      // 로컬 저장소에서 모든 draft 키 가져오기
+      const draftKeys = getAllDraftKeys()
+      
+      if (draftKeys.length > 0) {
+        // draft가 있으면 가장 최근 것 찾기
+        let latestDraft: { noteId: string; title: string; tags: string[]; content: string; lastModified: number } | undefined
+        
+        for (const key of draftKeys) {
+          try {
+            const noteId = key.replace('noteforest_draft_', '')
+            const draft = loadDraft(noteId)
+            
+            if (draft) {
+              if (!latestDraft || draft.lastModified > latestDraft.lastModified) {
+                latestDraft = {
+                  noteId,
+                  title: draft.title,
+                  tags: draft.tags,
+                  content: draft.content,
+                  lastModified: draft.lastModified,
+                }
+              }
+            }
+          } catch (error) {
+            console.warn('Draft 파싱 실패:', error)
+          }
+        }
+        
+        if (latestDraft) {
+          // 가장 최근 draft로 상태 설정
+          setSelectedNoteId(latestDraft.noteId)
+          setNoteTitle(latestDraft.title)
+          setNoteTags(latestDraft.tags)
+          setNoteContent(latestDraft.content)
+          setEditorKey(prev => prev + 1)
+          
+          console.log('로컬 저장소에서 draft 복원:', latestDraft.noteId)
+          showSnackbar('이전 편집 내용을 복원했습니다.', 'info')
+          return
+        }
+      }
+      
+      // draft가 없으면 새 메모 생성
       const newNoteId = v4()
       setSelectedNoteId(newNoteId)
       console.log('최초 접속 시 새 메모 생성:', newNoteId)
@@ -87,6 +158,9 @@ export function useNoteManagement(
       if (response.success) {
         showSnackbar('메모가 성공적으로 저장되었습니다.', 'success')
         console.log('메모 저장 완료:', selectedNoteId)
+        
+        // 저장 성공 시 해당 노트의 draft 삭제
+        clearDraft(selectedNoteId)
       } else {
         throw new Error(response.error || '메모 저장에 실패했습니다.')
       }
@@ -117,9 +191,39 @@ export function useNoteManagement(
       const response = await getNote(noteId)
       
       if (response.success && response.data) {
-        setNoteTitle(response.data.title || '')
-        setNoteTags(response.data.tags || [])
-        setNoteContent(response.data.body || '')
+        const loadedTitle = response.data.title || ''
+        const loadedTags = response.data.tags || []
+        const loadedContent = response.data.body || ''
+        
+        // Draft가 있는지 확인
+        const draft = loadDraft(noteId)
+        if (draft) {
+          // Draft와 서버 데이터 비교
+          const isDifferent = (
+            draft.title !== loadedTitle ||
+            JSON.stringify(draft.tags) !== JSON.stringify(loadedTags) ||
+            draft.content !== loadedContent
+          )
+          
+          if (isDifferent) {
+            // Draft와 서버 데이터가 다르면 복원 다이얼로그 표시
+            setDraftData({
+              title: draft.title,
+              tags: draft.tags,
+              content: draft.content,
+              lastModified: draft.lastModified,
+            })
+            setShowDraftDialog(true)
+          } else {
+            // 동일하면 draft 삭제
+            clearDraft(noteId)
+          }
+        }
+        
+        // 서버 데이터로 상태 설정
+        setNoteTitle(loadedTitle)
+        setNoteTags(loadedTags)
+        setNoteContent(loadedContent)
         setEditorKey(prev => prev + 1)
         
         console.log('메모 로드 완료:', noteId)
@@ -142,15 +246,50 @@ export function useNoteManagement(
   }
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNoteTitle(event.target.value)
+    const newTitle = event.target.value
+    setNoteTitle(newTitle)
+    // 실시간으로 draft 저장
+    debouncedSaveDraft(selectedNoteId, newTitle, noteTags, noteContent)
   }
 
   const handleTagsChange = (_event: any, newValue: string[]) => {
     setNoteTags(newValue)
+    // 실시간으로 draft 저장
+    debouncedSaveDraft(selectedNoteId, noteTitle, newValue, noteContent)
   }
 
   const handleContentChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setNoteContent(event.target.value)
+    const newContent = event.target.value
+    setNoteContent(newContent)
+    // 실시간으로 draft 저장
+    debouncedSaveDraft(selectedNoteId, noteTitle, noteTags, newContent)
+  }
+
+  // Draft 복원 관련 핸들러들
+  const handleRestoreDraft = () => {
+    if (draftData) {
+      setNoteTitle(draftData.title)
+      setNoteTags(draftData.tags)
+      setNoteContent(draftData.content)
+      setEditorKey(prev => prev + 1)
+      setShowDraftDialog(false)
+      setDraftData(null)
+      showSnackbar('편집 중인 내용을 복원했습니다.', 'success')
+    }
+  }
+
+  const handleDiscardDraft = () => {
+    if (selectedNoteId) {
+      clearDraft(selectedNoteId)
+    }
+    setShowDraftDialog(false)
+    setDraftData(null)
+    showSnackbar('편집 중인 내용을 삭제했습니다.', 'info')
+  }
+
+  const handleCancelDraftDialog = () => {
+    setShowDraftDialog(false)
+    setDraftData(null)
   }
 
   return {
@@ -163,6 +302,10 @@ export function useNoteManagement(
     saving,
     loading,
     
+    // Draft 관련
+    showDraftDialog,
+    draftData,
+    
     // 액션들
     handleNewNote,
     handleSaveNote,
@@ -170,6 +313,11 @@ export function useNoteManagement(
     handleTitleChange,
     handleTagsChange,
     handleContentChange,
+    
+    // Draft 관련 액션들
+    handleRestoreDraft,
+    handleDiscardDraft,
+    handleCancelDraftDialog,
     
     // 상태 설정 함수들
     setNoteTitle,

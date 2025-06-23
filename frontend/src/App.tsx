@@ -8,6 +8,7 @@ import Sidebar from './components/Sidebar'
 import NoteEditor from './components/NoteEditor'
 import NotificationSnackbar from './components/NotificationSnackbar'
 import PWAUpdatePrompt from './components/PWAUpdatePrompt'
+import DraftRestoreDialog from './components/DraftRestoreDialog'
 import { theme } from './theme'
 import { useNoteManagement } from './hooks/useNoteManagement'
 import { useSnackbar } from './hooks/useSnackbar'
@@ -30,12 +31,17 @@ function AppContent() {
     editorKey,
     saving,
     loading,
+    showDraftDialog,
+    draftData,
     handleNewNote,
     handleSaveNote,
     handleNoteSelect,
     handleTitleChange,
     handleTagsChange,
     handleContentChange,
+    handleRestoreDraft,
+    handleDiscardDraft,
+    handleCancelDraftDialog,
   } = useNoteManagement(showSnackbar)
   
   // 키보드 단축키
@@ -106,6 +112,14 @@ function AppContent() {
           message={snackbarMessage}
           severity={snackbarSeverity}
           onClose={handleSnackbarClose}
+        />
+        
+        <DraftRestoreDialog
+          open={showDraftDialog}
+          draftData={draftData}
+          onRestore={handleRestoreDraft}
+          onDiscard={handleDiscardDraft}
+          onCancel={handleCancelDraftDialog}
         />
       </Box>
     </>
