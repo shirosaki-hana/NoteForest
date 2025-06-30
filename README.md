@@ -18,7 +18,6 @@
 ### Frontend
 - **React 19** + **TypeScript** + **Vite**
 - **Material-UI (MUI)** - UI 컴포넌트
-- **Milkdown** - 마크다운 에디터
 - **React Router** - 라우팅
 
 ### Backend
