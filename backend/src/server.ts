@@ -22,7 +22,7 @@ app.use(cookieParser());
 app.use('/auth', authRouter);
 
 // API 라우트 (인증 필요)
-app.use('/api', requireAuth, apiRouter);
+app.use('/api', apiRouter);
 
 // 정적 파일 서빙 (인증 불필요) - PWA 지원을 위해
 app.use(express.static(frontendDistPath));

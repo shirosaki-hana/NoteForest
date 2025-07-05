@@ -15,7 +15,6 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
       sx={{
         flexGrow: 1,
         padding: '16px 0',
-        color: '#f8f9ff',
         fontFamily: '"Inter", "Arial", "Helvetica", sans-serif',
         lineHeight: 1.6,
         overflow: 'auto',
@@ -25,7 +24,6 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
           fontWeight: 600,
           marginTop: '24px',
           marginBottom: '16px',
-          color: '#f8f9ff',
           '&:first-of-type': {
             marginTop: 0,
           },
@@ -33,13 +31,13 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
         '& h1': {
           fontSize: '2.5rem',
           lineHeight: 1.2,
-          borderBottom: '1px solid #32353a',
+          borderBottom: '1px',
           paddingBottom: '8px',
         },
         '& h2': {
           fontSize: '2rem',
           lineHeight: 1.3,
-          borderBottom: '1px solid #32353a',
+          borderBottom: '1px',
           paddingBottom: '8px',
         },
         '& h3': {
@@ -87,7 +85,6 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
           borderRadius: '8px',
           padding: '16px',
           marginBottom: '16px',
-          overflow: 'auto',
           '& code': {
             backgroundColor: 'transparent',
             color: 'inherit',
@@ -144,17 +141,7 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
           borderRadius: '8px',
           marginBottom: '16px',
         },
-        // 스크롤바 스타일링
-        '&::-webkit-scrollbar': {
-          width: '8px',
-        },
-        '&::-webkit-scrollbar-thumb': {
-          backgroundColor: '#32353a',
-          borderRadius: '4px',
-        },
-        '&::-webkit-scrollbar-track': {
-          backgroundColor: '#191c20',
-        },
+
       }}
     >
       <ReactMarkdown

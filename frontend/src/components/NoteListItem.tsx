@@ -20,10 +20,6 @@ export default function NoteListItem({ note, isSelected, onSelect, onDelete }: N
           px: 2,
           py: 1.5,
           borderBottom: '1px solid #191c20', // surface-low
-          '&.Mui-selected': {
-            backgroundColor: '#32353a', // selected color
-            borderLeft: '3px solid #a1c9fd', // primary color
-          },
           '&:hover': {
             backgroundColor: '#1d2024', // hover color
           },

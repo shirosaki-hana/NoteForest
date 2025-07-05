@@ -41,7 +41,6 @@ export default function Sidebar({ isOpen, onToggle, selectedNoteId, onNoteSelect
   const drawerContent = (
     <Box sx={{ 
       width: SIDEBAR_WIDTH, 
-      height: '100%',
       backgroundColor: '#111418', // surface color
       color: '#f8f9ff' // on-background color
     }}>
@@ -81,8 +80,6 @@ export default function Sidebar({ isOpen, onToggle, selectedNoteId, onNoteSelect
             boxSizing: 'border-box',
             width: SIDEBAR_WIDTH,
             border: 'none',
-            backgroundColor: '#111418', // surface color
-            boxShadow: '0px 8px 32px rgba(0, 0, 0, 0.5)', // stronger shadow for overlay
           },
         }}
       >

@@ -22,13 +22,6 @@ export default function NewNoteConfirmDialog({
     <Dialog
       open={open}
       onClose={onCancel}
-      PaperProps={{
-        sx: {
-          backgroundColor: '#111418', // surface color
-          border: '1px solid #32353a', // divider
-          borderRadius: 3,
-        }
-      }}
     >
       <DialogTitle sx={{ color: '#f8f9ff', pb: 1 }}> {/* on-background */}
         새 메모 생성

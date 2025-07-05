@@ -1,6 +1,6 @@
 import type { NoteListResponse, NoteResponse, WriteResponse, DeleteResponse } from '../types/api';
 
-const API_BASE = '/api';
+const API_BASE = 'http://localhost:3001/api';
 
 // API 호출을 위한 기본 fetch 래퍼
 async function apiCall<T>(endpoint: string, options?: RequestInit): Promise<T> {

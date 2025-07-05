@@ -1,4 +1,4 @@
-import { Box, TextField, Chip, Stack, Autocomplete, CircularProgress, Typography } from '@mui/material'
+import { Box, TextField, Chip, Stack, CircularProgress, Typography } from '@mui/material'
 import { useState } from 'react'
 import MarkdownRenderer from './MarkdownRenderer'
 
@@ -35,11 +35,11 @@ export default function NoteEditor({
       component="main"
       sx={{
         flexGrow: 1,
-        pt: 8, // AppBar 높이만큼 패딩
+        pt: 8, 
         height: '100vh',
         display: 'flex',
         flexDirection: 'column',
-        backgroundColor: '#111418', // surface color (에디터 배경과 동일)
+        overflow: 'auto',
       }}
     >
       {/* 제목과 태그 입력 영역 */}
@@ -47,7 +47,6 @@ export default function NoteEditor({
         sx={{
           px: 2,
           py: 1.5,
-          backgroundColor: '#111418',
         }}
       >
         <Stack spacing={1}>
@@ -59,21 +58,15 @@ export default function NoteEditor({
               placeholder="제목 없음"
               value={noteTitle}
               onChange={onTitleChange}
-              InputProps={{
-                disableUnderline: true,
+              slotProps={{
+                input: {
+                  disableUnderline: true,
+                }
               }}
               sx={{
                 '& .MuiInput-root': {
                   fontSize: '1.5rem',
                   fontWeight: 600,
-                  color: '#f8f9ff',
-                  backgroundColor: 'transparent',
-                  '&:hover': {
-                    backgroundColor: 'transparent',
-                  },
-                  '&.Mui-focused': {
-                    backgroundColor: 'transparent',
-                  },
                 },
                 '& input': {
                   padding: '8px 0',
@@ -91,9 +84,8 @@ export default function NoteEditor({
               sx={{
                 fontSize: '1.5rem',
                 fontWeight: 600,
-                color: '#f8f9ff',
+
                 padding: '8px 0',
-                fontFamily: '"Rubik", "Cambria", "Times New Roman", "Times", serif',
               }}
             >
               {noteTitle || '제목 없음'}
@@ -102,78 +94,88 @@ export default function NoteEditor({
           
           {/* 태그 입력/표시 */}
           {isEditMode ? (
-            <Autocomplete
-              multiple
-              freeSolo
-              size="small"
-              options={[]}
-              value={noteTags}
-              inputValue={inputValue}
-              onInputChange={(_, newInputValue) => {
-                setInputValue(newInputValue)
-              }}
-              onChange={(event, newValue) => {
-                onTagsChange(event, newValue)
-                setInputValue('')
-              }}
-              renderTags={(value, getTagProps) =>
-                value.map((option, index) => (
-                  <Chip
-                    variant="filled"
-                    label={option}
-                    {...getTagProps({ index })}
-                    key={index}
-                    size="small"
-                    sx={{
-                      height: '20px',
-                      fontSize: '0.75rem',
-                      backgroundColor: '#32353a',
-                      color: '#c3c6cf',
-                      border: 'none',
-                      '& .MuiChip-deleteIcon': {
-                        color: '#8d9199',
-                        fontSize: '14px',
-                        '&:hover': {
-                          color: '#c3c6cf',
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+              {/* 기존 태그들 표시 */}
+              {noteTags.length > 0 && (
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                  {noteTags.map((tag, index) => (
+                    <Chip
+                      key={index}
+                      variant="filled"
+                      label={tag}
+                      size="small"
+                      onDelete={() => {
+                        const newTags = noteTags.filter((_, i) => i !== index);
+                        onTagsChange(null, newTags);
+                      }}
+                      sx={{
+                        height: '20px',
+                        fontSize: '0.75rem',
+                        backgroundColor: '#32353a',
+                        color: '#c3c6cf',
+                        border: 'none',
+                        '& .MuiChip-deleteIcon': {
+                          color: '#8d9199',
+                          fontSize: '14px',
+                          '&:hover': {
+                            color: '#c3c6cf',
+                          },
                         },
-                      },
-                    }}
-                  />
-                ))
-              }
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  variant="standard"
-                  placeholder="태그 추가..."
-                  InputProps={{
-                    ...params.InputProps,
-                    disableUnderline: true,
-                  }}
-                  sx={{
-                    '& .MuiInput-root': {
-                      fontSize: '0.875rem',
-                      color: '#c3c6cf',
-                      backgroundColor: 'transparent',
-                      minHeight: 'auto',
-                      '&:hover': {
-                        backgroundColor: 'transparent',
-                      },
-                      '&.Mui-focused': {
-                        backgroundColor: 'transparent',
-                      },
-                    },
-                    '& input': {
-                      padding: '4px 0',
-                      '&::placeholder': {
-                        color: '#8d9199',
-                        opacity: 1,
-                      },
-                    },
-                  }}
-                />
+                      }}
+                    />
+                  ))}
+                </Box>
               )}
-            />
+              
+              {/* 태그 입력 필드 */}
+              <TextField
+                variant="standard"
+                placeholder="태그 추가 (엔터키로 추가)..."
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && inputValue.trim()) {
+                    e.preventDefault();
+                    const trimmedValue = inputValue.trim();
+                    if (!noteTags.includes(trimmedValue)) {
+                      const newTags = [...noteTags, trimmedValue];
+                      onTagsChange(null, newTags);
+                    }
+                    setInputValue('');
+                  } else if (e.key === 'Backspace' && !inputValue && noteTags.length > 0) {
+                    // 입력값이 없을 때 백스페이스로 마지막 태그 삭제
+                    const newTags = noteTags.slice(0, -1);
+                    onTagsChange(null, newTags);
+                  }
+                }}
+                slotProps={{
+                  input: {
+                    disableUnderline: true,
+                  }
+                }}
+                sx={{
+                  '& .MuiInput-root': {
+                    fontSize: '0.875rem',
+                    color: '#c3c6cf',
+                    backgroundColor: 'transparent',
+                    minHeight: 'auto',
+                    '&:hover': {
+                      backgroundColor: 'transparent',
+                    },
+                    '&.Mui-focused': {
+                      backgroundColor: 'transparent',
+                    },
+                  },
+                  '& input': {
+                    padding: '4px 0',
+                    '&::placeholder': {
+                      color: '#8d9199',
+                      opacity: 1,
+                    },
+                  },
+                }}
+              />
+            </Box>
           ) : (
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, padding: '4px 0' }}>
               {noteTags.length > 0 ? (
@@ -212,8 +214,7 @@ export default function NoteEditor({
               alignItems: 'center', 
               justifyContent: 'center',
               flexDirection: 'column',
-              gap: 2,
-              color: '#c3c6cf'
+              gap: 2
             }}
           >
             <CircularProgress 
@@ -238,8 +239,10 @@ export default function NoteEditor({
                 placeholder="여기에 노트를 작성하세요..."
                 value={noteContent}
                 onChange={onContentChange}
-                InputProps={{
-                  disableUnderline: true,
+                slotProps={{
+                  input: {
+                    disableUnderline: true,
+                  }
                 }}
                 sx={{
                   flexGrow: 1,
@@ -249,7 +252,6 @@ export default function NoteEditor({
                   '& .MuiInput-root': {
                     fontSize: '16px',
                     lineHeight: '24px',
-                    color: '#f8f9ff',
                     backgroundColor: 'transparent',
                     alignItems: 'stretch',
                     height: '98%',
@@ -291,9 +293,11 @@ export default function NoteEditor({
               /* Markdown 렌더러 */
               <MarkdownRenderer content={noteContent} />
             )}
-            
-            {/* 마스코트 이미지 - 우측 하단 고정 */}
-            <Box
+          </Box>
+        )}
+      </Box>
+      {/* 마스코트 이미지 - 우측 하단 고정 */}
+      <Box
               component="img"
               src="/mascot.svg"
               alt="NoteForest Mascot"
@@ -310,9 +314,6 @@ export default function NoteEditor({
                 // 이상해 보여도 이게 최적 설정입니다...
               }}
             />
-          </Box>
-        )}
-      </Box>
     </Box>
   )
 }
