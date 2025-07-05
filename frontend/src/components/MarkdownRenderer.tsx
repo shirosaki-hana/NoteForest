@@ -4,7 +4,8 @@ import rehypeHighlight from 'rehype-highlight'
 import rehypeRaw from 'rehype-raw'
 import remarkMath from 'remark-math'
 import rehypeKatex from 'rehype-katex'
-import { Box } from '@mui/material'
+import rehypeQuoteHighlight from '../utils/rehypeQuoteHighlight'
+import { Box, alpha } from '@mui/material'
 import 'highlight.js/styles/github-dark.css'
 
 interface MarkdownRendererProps {
@@ -21,6 +22,17 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
         lineHeight: 1.6,
         overflow: 'auto',
         height: '100%',
+        '& .quote-highlight': {
+          color: 'info.main',
+          fontWeight: 500,
+          borderRadius: '3px',
+          padding: '0 2px',
+          backgroundColor: (theme) => alpha(theme.palette.info.main, 0.08),
+          transition: 'all 0.2s ease-in-out',
+          '&:hover': {
+            backgroundColor: (theme) => alpha(theme.palette.info.main, 0.12),
+          },
+        },
         '& code': {
           padding: '2px 6px',
           borderRadius: '4px',
@@ -100,7 +112,7 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
     >
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkMath]}
-        rehypePlugins={[rehypeHighlight, rehypeKatex, rehypeRaw]}
+        rehypePlugins={[rehypeHighlight, rehypeKatex, rehypeRaw, rehypeQuoteHighlight]}
       >
         {content || '*내용이 없습니다.*'}
       </ReactMarkdown>

@@ -15,6 +15,7 @@
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^7.1.1",
     "@mui/material": "^7.1.1",
+    "@types/hast": "^3.0.4",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "highlight.js": "^11.11.1",
@@ -27,6 +28,7 @@
     "rehype-raw": "^7.0.0",
     "remark-gfm": "^4.0.1",
     "remark-math": "^6.0.0",
+    "unist-util-visit": "^5.0.0",
     "uuid": "^11.1.0"
   },
   "devDependencies": {

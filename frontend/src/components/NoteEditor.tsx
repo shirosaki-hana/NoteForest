@@ -123,11 +123,25 @@ export default function NoteEditor({
               {/* 태그 입력 필드 */}
               <TextField
                 variant="standard"
-                placeholder="엔터키로 태그 추가"
+                placeholder="쉼표나 Tab키로 태그 추가"
                 value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  
+                  // 쉼표가 입력되면 즉시 태그 추가
+                  if (value.includes(',')) {
+                    const tagText = value.replace(',', '').trim();
+                    if (tagText && !noteTags.includes(tagText)) {
+                      const newTags = [...noteTags, tagText];
+                      onTagsChange(null, newTags);
+                    }
+                    setInputValue('');
+                  } else {
+                    setInputValue(value);
+                  }
+                }}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter' && inputValue.trim()) {
+                  if (e.key === 'Tab' && inputValue.trim()) {
                     e.preventDefault();
                     const trimmedValue = inputValue.trim();
                     if (!noteTags.includes(trimmedValue)) {

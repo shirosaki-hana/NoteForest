@@ -15,7 +15,8 @@ const PORT = process.env.PORT || 3001;
 const frontendDistPath = path.join(__dirname, '../../frontend/dist');
 
 app.use(cors()); //TODO : 환경변수로 프로덕트/데브모드 구분하고 운영 도메인 입력받아서 CORS제한하도록 보안 강화 필요)
-app.use(express.json());
+app.use(express.json({ limit: '50mb' })); // 50MB까지 허용
+app.use(express.urlencoded({ extended: true, limit: '50mb' })); // URL 인코딩된 데이터도 50MB까지
 app.use(cookieParser());
 
 // 인증 API 라우트 (JSON 응답)
