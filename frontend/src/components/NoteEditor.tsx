@@ -70,9 +70,8 @@ export default function NoteEditor({
                 },
                 '& input': {
                   padding: '8px 0',
-                  '&::placeholder': {
-                    color: '#8d9199',
-                    opacity: 1,
+                '&::placeholder': {
+                    opacity: 0.5,
                     fontWeight: 400,
                   },
                 },
@@ -111,15 +110,9 @@ export default function NoteEditor({
                       sx={{
                         height: '20px',
                         fontSize: '0.75rem',
-                        backgroundColor: '#32353a',
-                        color: '#c3c6cf',
                         border: 'none',
                         '& .MuiChip-deleteIcon': {
-                          color: '#8d9199',
                           fontSize: '14px',
-                          '&:hover': {
-                            color: '#c3c6cf',
-                          },
                         },
                       }}
                     />
@@ -130,7 +123,7 @@ export default function NoteEditor({
               {/* 태그 입력 필드 */}
               <TextField
                 variant="standard"
-                placeholder="태그 추가 (엔터키로 추가)..."
+                placeholder="엔터키로 태그 추가"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyDown={(e) => {
@@ -156,22 +149,14 @@ export default function NoteEditor({
                 sx={{
                   '& .MuiInput-root': {
                     fontSize: '0.875rem',
-                    color: '#c3c6cf',
-                    backgroundColor: 'transparent',
                     minHeight: 'auto',
-                    '&:hover': {
-                      backgroundColor: 'transparent',
-                    },
-                    '&.Mui-focused': {
-                      backgroundColor: 'transparent',
-                    },
                   },
                   '& input': {
                     padding: '4px 0',
-                    '&::placeholder': {
-                      color: '#8d9199',
-                      opacity: 1,
-                    },
+                  },
+                  '&::placeholder': {
+                    opacity: 0.5,
+                    fontWeight: 400,
                   },
                 }}
               />
@@ -188,14 +173,12 @@ export default function NoteEditor({
                     sx={{
                       height: '20px',
                       fontSize: '0.75rem',
-                      backgroundColor: '#32353a',
-                      color: '#c3c6cf',
                       border: 'none',
                     }}
                   />
                 ))
               ) : (
-                <Typography variant="caption" sx={{ color: '#8d9199', padding: '2px 0' }}>
+                <Typography variant="caption" sx={{ padding: '2px 0' }}>
                   태그 없음
                 </Typography>
               )}
@@ -219,11 +202,8 @@ export default function NoteEditor({
           >
             <CircularProgress 
               size={40} 
-              sx={{ 
-                color: '#a1c9fd' 
-              }} 
             />
-            <Typography variant="body2" sx={{ color: '#c3c6cf' }}>
+            <Typography variant="body2">
               메모를 불러오는 중...
             </Typography>
           </Box>
@@ -252,17 +232,10 @@ export default function NoteEditor({
                   '& .MuiInput-root': {
                     fontSize: '16px',
                     lineHeight: '24px',
-                    backgroundColor: 'transparent',
                     alignItems: 'stretch',
                     height: '98%',
                     display: 'flex',
                     flexDirection: 'column',
-                    '&:hover': {
-                      backgroundColor: 'transparent',
-                    },
-                    '&.Mui-focused': {
-                      backgroundColor: 'transparent',
-                    },
                   },
                   '& textarea': {
                     padding: '16px 0',
@@ -273,18 +246,8 @@ export default function NoteEditor({
                     minHeight: '100% !important',
                     overflow: 'auto !important',
                     '&::placeholder': {
-                      color: '#8d9199',
-                      opacity: 1,
-                    },
-                    '&::-webkit-scrollbar': {
-                      width: '8px',
-                    },
-                    '&::-webkit-scrollbar-thumb': {
-                      backgroundColor: '#32353a',
-                      borderRadius: '4px',
-                    },
-                    '&::-webkit-scrollbar-track': {
-                      backgroundColor: '#191c20',
+                      opacity: 0.5,
+                      fontWeight: 400,
                     },
                   },
                 }}

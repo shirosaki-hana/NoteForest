@@ -58,27 +58,29 @@ export default function DraftRestoreDialog({
       fullWidth
       sx={{
         '& .MuiDialog-paper': {
-          backgroundColor: '#111418',
-          border: '1px solid #32353a',
+          backgroundColor: 'background.paper',
+          border: '1px solid',
+          borderColor: 'divider',
         },
       }}
     >
-      <DialogTitle sx={{ color: '#f8f9ff', pb: 1 }}>
+      <DialogTitle sx={{ color: 'text.primary', pb: 1 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <RestorePageOutlined sx={{ color: '#a1c9fd' }} />
+          <RestorePageOutlined sx={{ color: 'primary.main' }} />
           편집 중인 내용 발견
         </Box>
       </DialogTitle>
 
       <DialogContent>
-        <Typography variant="body2" sx={{ color: '#c3c6cf', mb: 2 }}>
+        <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
           이 노트에 저장되지 않은 편집 내용이 있습니다. 복원하시겠습니까?
         </Typography>
 
         <Box
           sx={{
-            backgroundColor: '#1a1d21',
-            border: '1px solid #32353a',
+            backgroundColor: 'background.default',
+            border: '1px solid',
+            borderColor: 'divider',
             borderRadius: '8px',
             padding: '12px',
             mb: 2,
@@ -88,7 +90,7 @@ export default function DraftRestoreDialog({
           <Typography
             variant="subtitle2"
             sx={{
-              color: '#f8f9ff',
+              color: 'text.primary',
               fontWeight: 600,
               mb: 1,
               fontSize: '0.95rem',
@@ -108,8 +110,8 @@ export default function DraftRestoreDialog({
                   sx={{
                     height: '18px',
                     fontSize: '0.7rem',
-                    backgroundColor: '#32353a',
-                    color: '#c3c6cf',
+                    backgroundColor: 'action.hover',
+                    color: 'text.secondary',
                   }}
                 />
               ))}
@@ -120,7 +122,7 @@ export default function DraftRestoreDialog({
           <Typography
             variant="body2"
             sx={{
-              color: '#c3c6cf',
+              color: 'text.secondary',
               fontSize: '0.85rem',
               lineHeight: 1.4,
               fontStyle: draftData.content ? 'normal' : 'italic',
@@ -133,7 +135,7 @@ export default function DraftRestoreDialog({
           <Typography
             variant="caption"
             sx={{
-              color: '#8d9199',
+              color: 'text.disabled',
               display: 'block',
               mt: 1,
               fontSize: '0.75rem',
@@ -148,9 +150,9 @@ export default function DraftRestoreDialog({
         <Button
           onClick={onCancel}
           sx={{
-            color: '#8d9199',
+            color: 'text.disabled',
             '&:hover': {
-              backgroundColor: '#1d2024',
+              backgroundColor: 'action.hover',
             },
           }}
         >
@@ -160,9 +162,9 @@ export default function DraftRestoreDialog({
           onClick={onDiscard}
           startIcon={<DeleteOutline />}
           sx={{
-            color: '#ffb4ab',
+            color: 'error.main',
             '&:hover': {
-              backgroundColor: '#2d1b1e',
+              backgroundColor: (theme) => theme.palette.error.main + '1A',
             },
           }}
         >
@@ -173,10 +175,10 @@ export default function DraftRestoreDialog({
           startIcon={<RestorePageOutlined />}
           variant="contained"
           sx={{
-            backgroundColor: '#a1c9fd',
-            color: '#111418',
+            backgroundColor: 'primary.main',
+            color: 'primary.contrastText',
             '&:hover': {
-              backgroundColor: '#82b1ff',
+              backgroundColor: 'primary.dark',
             },
           }}
         >

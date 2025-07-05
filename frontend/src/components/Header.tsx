@@ -13,8 +13,11 @@ import {
   Logout as LogoutIcon,
   Edit as EditIcon,
   Visibility as VisibilityIcon,
+  LightMode as LightModeIcon,
+  DarkMode as DarkModeIcon,
 } from '@mui/icons-material';
 import { useAuth } from '../hooks/useAuth';
+import { useTheme } from '../hooks/useTheme';
 import { useState } from 'react';
 import NewNoteConfirmDialog from './NewNoteConfirmDialog';
 
@@ -36,6 +39,7 @@ export default function Header({
   onToggleEditMode 
 }: HeaderProps) {
   const { logout } = useAuth();
+  const { mode, toggleMode } = useTheme();
   const [showNewNoteDialog, setShowNewNoteDialog] = useState(false);
 
   const handleNewNoteClick = () => {
@@ -56,8 +60,6 @@ export default function Header({
       position="fixed" 
       sx={{ 
         zIndex: (theme) => theme.zIndex.drawer + 1,
-        backgroundColor: '#111418', // surface color
-        borderBottom: '1px solid #32353a', // divider
         boxShadow: 'none',
       }}
     >
@@ -69,10 +71,6 @@ export default function Header({
           onClick={onMenuToggle}
           sx={{ 
             mr: 2,
-            color: '#e1e2e8', // on-surface color
-            '&:hover': {
-              backgroundColor: '#1d2024', // hover color
-            }
           }}
         >
           <MenuIcon />
@@ -86,13 +84,12 @@ export default function Header({
             sx={{ 
               fontFamily: 'Rubik, Cambria, "Times New Roman", Times, serif',
               fontWeight: 600,
-              color: '#a1c9fd', // primary color
               display: 'flex',
               alignItems: 'center',
               gap: 1,
             }}
           >
-            🌲 NoteForest
+            NoteForest
           </Typography>
         </Box>        
         
@@ -102,14 +99,20 @@ export default function Header({
           onClick={onToggleEditMode}
           sx={{ 
             mr: 1,
-            color: '#e1e2e8', // on-surface color
-            '&:hover': {
-              backgroundColor: '#1d2024', // hover color
-              color: isEditMode ? '#81c784' : '#ffb74d', // green for preview, orange for edit
-            }
           }}
         >
           {isEditMode ? <VisibilityIcon /> : <EditIcon />}
+        </IconButton>
+
+        <IconButton
+          color="inherit"
+          aria-label={mode === 'dark' ? "switch to light mode" : "switch to dark mode"}
+          onClick={toggleMode}
+          sx={{ 
+            mr: 1,
+          }}
+        >
+          {mode === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}
         </IconButton>
 
         <IconButton
@@ -119,37 +122,23 @@ export default function Header({
           disabled={saving || !isEditMode} // 읽기 모드에서는 저장 비활성화
           sx={{ 
             mr: 1,
-            color: saving || !isEditMode ? '#8d9199' : '#e1e2e8', // on-surface color, muted when saving or in read mode
-            '&:hover': {
-              backgroundColor: (saving || !isEditMode) ? 'transparent' : '#1d2024', // hover color
-              color: (saving || !isEditMode) ? '#8d9199' : '#9ccc65', // success color
-            },
-            '&:disabled': {
-              color: '#8d9199',
-            }
           }}
         >
           {saving ? (
             <CircularProgress 
               size={20} 
-              sx={{ 
-                color: '#8d9199' 
-              }} 
             />
           ) : (
             <SaveIcon />
           )}
-        </IconButton>        <IconButton
+        </IconButton>        
+        
+        <IconButton
           color="inherit"
           aria-label="new note"
           onClick={handleNewNoteClick}
           sx={{ 
             mr: 1,
-            color: '#e1e2e8', // on-surface color
-            '&:hover': {
-              backgroundColor: '#1d2024', // hover color
-              color: '#a1c9fd', // primary color
-            }
           }}
         >
           <AddIcon />
@@ -159,15 +148,10 @@ export default function Header({
           color="inherit"
           aria-label="logout"
           onClick={logout}
-          sx={{ 
-            color: '#e1e2e8', // on-surface color
-            '&:hover': {
-              backgroundColor: '#1d2024', // hover color
-              color: '#f48fb1', // secondary color
-            }
-          }}
         >
-          <LogoutIcon />        </IconButton>
+          <LogoutIcon />        
+        </IconButton>
+        
       </Toolbar>
       
       <NewNoteConfirmDialog

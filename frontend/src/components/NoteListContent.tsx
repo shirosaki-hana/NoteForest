@@ -22,7 +22,7 @@ export default function NoteListContent({
   if (loading) {
     return (
       <Box sx={{ p: 3, textAlign: 'center' }}>
-        <Typography sx={{ color: '#c3c6cf' }}>로딩 중...</Typography>
+        <Typography>로딩 중...</Typography>
       </Box>
     )
   }
@@ -30,7 +30,7 @@ export default function NoteListContent({
   if (error) {
     return (
       <Box sx={{ p: 3, textAlign: 'center' }}>
-        <Typography sx={{ color: '#ffb4ab' }}>{error}</Typography> {/* error color */}
+        <Typography>{error}</Typography> {/* error color */}
       </Box>
     )
   }
@@ -38,7 +38,7 @@ export default function NoteListContent({
   if (notes.length === 0) {
     return (
       <Box sx={{ p: 3, textAlign: 'center' }}>
-        <Typography sx={{ color: '#c3c6cf' }}>메모가 없습니다.</Typography>
+        <Typography>메모가 없습니다.</Typography>
       </Box>
     )
   }

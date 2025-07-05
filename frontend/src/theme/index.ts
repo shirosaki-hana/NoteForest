@@ -1,7 +1,11 @@
 import { createTheme } from '@mui/material/styles'
 
-export const theme = createTheme({
-  palette: {
-    mode: 'dark',
-  },
-})
+export function createAppTheme(mode: 'light' | 'dark') {
+  return createTheme({
+    palette: {
+      mode,
+    },
+  })
+}
+
+export const theme = createAppTheme('dark')

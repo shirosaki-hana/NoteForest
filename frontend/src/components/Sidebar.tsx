@@ -1,4 +1,4 @@
-import { Drawer, Box, Divider } from '@mui/material'
+import { Drawer, Box } from '@mui/material'
 import { useNoteList } from '../hooks/useNoteList'
 import { useNoteDelete } from '../hooks/useNoteDelete'
 import { useSnackbar } from '../hooks/useSnackbar'
@@ -41,15 +41,11 @@ export default function Sidebar({ isOpen, onToggle, selectedNoteId, onNoteSelect
   const drawerContent = (
     <Box sx={{ 
       width: SIDEBAR_WIDTH, 
-      backgroundColor: '#111418', // surface color
-      color: '#f8f9ff' // on-background color
     }}>
       <SidebarHeader 
         notesCount={notes.length}
         onClose={onToggle}
       />
-
-      <Divider sx={{ borderColor: '#32353a' }} /> {/* divider */}
 
       {/* 메모 목록 */}
       <Box sx={{ flexGrow: 1, overflow: 'auto' }}>

@@ -46,7 +46,7 @@ export default function LoginPage() {
       <Paper elevation={3} sx={{ p: 4, maxWidth: 400, width: '100%' }}>
         <Box textAlign="center" mb={3}>
           <Typography variant="h4" component="h1" gutterBottom>
-            🌲 NoteForest
+            NoteForest
           </Typography>
           <Typography variant="h6" color="text.secondary">
             {isPasswordSet ? '로그인' : '비밀번호 설정'}
@@ -62,7 +62,7 @@ export default function LoginPage() {
             onChange={(e) => setPassword(e.target.value)}
             margin="normal"
             required
-            helperText={!isPasswordSet ? "처음 접속하시는 군요! 비밀번호를 설정해주세요." : ""}
+            helperText={!isPasswordSet ? "비밀번호를 설정해주세요." : ""}
           />
           
           {error && (

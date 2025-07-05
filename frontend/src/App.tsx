@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { ThemeProvider } from '@mui/material/styles'
 import { CssBaseline, Box, CircularProgress } from '@mui/material'
 import { AuthProvider, useAuth } from './hooks/useAuth'
+import { ThemeProvider as AppThemeProvider, useTheme } from './hooks/useTheme'
 import LoginPage from './components/LoginPage'
 import Header from './components/Header'
 import Sidebar from './components/Sidebar'
@@ -9,7 +10,7 @@ import NoteEditor from './components/NoteEditor'
 import NotificationSnackbar from './components/NotificationSnackbar'
 import PWAUpdatePrompt from './components/PWAUpdatePrompt'
 import DraftRestoreDialog from './components/DraftRestoreDialog'
-import { theme } from './theme'
+import { createAppTheme } from './theme'
 import { useNoteManagement } from './hooks/useNoteManagement'
 import { useSnackbar } from './hooks/useSnackbar'
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
@@ -126,7 +127,10 @@ function AppContent() {
   )
 }
 
-function App() {
+function ThemedApp() {
+  const { mode } = useTheme();
+  const theme = createAppTheme(mode);
+  
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -134,6 +138,14 @@ function App() {
         <AppContent />
       </AuthProvider>
     </ThemeProvider>
+  )
+}
+
+function App() {
+  return (
+    <AppThemeProvider>
+      <ThemedApp />
+    </AppThemeProvider>
   )
 }
 
