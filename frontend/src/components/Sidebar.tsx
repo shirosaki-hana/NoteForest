@@ -14,7 +14,7 @@ interface SidebarProps {
   onNoteSelect?: (noteId: string) => void;
 }
 
-const SIDEBAR_WIDTH = 320
+const SIDEBAR_WIDTH = 340
 
 export default function Sidebar({ isOpen, onToggle, selectedNoteId, onNoteSelect }: SidebarProps) {
   // 메모 목록 관리
@@ -75,6 +75,7 @@ export default function Sidebar({ isOpen, onToggle, selectedNoteId, onNoteSelect
           '& .MuiDrawer-paper': {
             boxSizing: 'border-box',
             width: SIDEBAR_WIDTH,
+            overflow: 'auto',
             border: 'none',
           },
         }}
