@@ -8,7 +8,6 @@ import Header from './components/Header'
 import Sidebar from './components/Sidebar'
 import NoteEditor from './components/NoteEditor'
 import NotificationSnackbar from './components/NotificationSnackbar'
-import PWAUpdatePrompt from './components/PWAUpdatePrompt'
 import DraftRestoreDialog from './components/DraftRestoreDialog'
 import { createAppTheme } from './theme'
 import { useNoteManagement } from './hooks/useNoteManagement'
@@ -79,7 +78,6 @@ function AppContent() {
 
   return (
     <>
-      <PWAUpdatePrompt />
       <Box sx={{ display: 'flex', minHeight: '100vh' }}>
         <Header 
           onMenuToggle={handleMenuToggle}
