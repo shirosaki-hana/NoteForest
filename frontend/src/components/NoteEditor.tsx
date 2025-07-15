@@ -1,6 +1,7 @@
 import { Box, TextField, Chip, Stack, CircularProgress, Typography } from '@mui/material'
 import { useState } from 'react'
 import MarkdownRenderer from './MarkdownRenderer'
+import MonacoEditor from './MonacoEditor'
 
 interface NoteEditorProps {
   // 상태
@@ -14,7 +15,7 @@ interface NoteEditorProps {
   // 핸들러
   onTitleChange: (event: React.ChangeEvent<HTMLInputElement>) => void
   onTagsChange: (event: any, newValue: string[]) => void
-  onContentChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void
+  onContentChange: (value: string) => void 
 }
 
 export default function NoteEditor({
@@ -150,7 +151,6 @@ export default function NoteEditor({
                     }
                     setInputValue('');
                   } else if (e.key === 'Backspace' && !inputValue && noteTags.length > 0) {
-                    // 입력값이 없을 때 백스페이스로 마지막 태그 삭제
                     const newTags = noteTags.slice(0, -1);
                     onTagsChange(null, newTags);
                   }
@@ -188,13 +188,10 @@ export default function NoteEditor({
                       height: '20px',
                       fontSize: '0.75rem',
                       border: 'none',
-                    }}
-                  />
+                    }} />
                 ))
               ) : (
-                <Typography variant="caption" sx={{ padding: '2px 0' }}>
-                  태그 없음
-                </Typography>
+                <Typography variant="caption" sx={{ padding: '2px 0' }}> 태그 없음 </Typography>
               )}
             </Box>
           )}
@@ -202,7 +199,7 @@ export default function NoteEditor({
       </Box>
 
       {/* 에디터 영역 */}
-      <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', px: 2, pb: 2 }}>
+      <Box sx={{ flexGrow: 1, overflow: 'auto', display: 'flex', flexDirection: 'column', px: 2, pb: 2 }}>
         {loading ? (
           <Box 
             sx={{ 
@@ -211,86 +208,36 @@ export default function NoteEditor({
               alignItems: 'center', 
               justifyContent: 'center',
               flexDirection: 'column',
-              gap: 2
-            }}
-          >
-            <CircularProgress 
-              size={40} 
-            />
-            <Typography variant="body2">
-              메모를 불러오는 중...
-            </Typography>
+              gap: 2}} >
+            <CircularProgress size={40}/>
+            <Typography variant="body2"> 메모를 불러오는 중... </Typography>
           </Box>
         ) : (
           <Box sx={{ position: 'relative', flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
             {isEditMode ? (
               /* 텍스트 에디터 */
-              <TextField
-                key={editorKey}
-                multiline
-                fullWidth
-                variant="standard"
-                placeholder="여기에 노트를 작성하세요..."
-                value={noteContent}
-                onChange={onContentChange}
-                slotProps={{
-                  input: {
-                    disableUnderline: true,
-                  }
-                }}
-                sx={{
-                  flexGrow: 1,
-                  height: '98%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  '& .MuiInput-root': {
-                    fontSize: '16px',
-                    lineHeight: '24px',
-                    alignItems: 'stretch',
-                    height: '98%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                  },
-                  '& textarea': {
-                    padding: '16px 0',
-                    resize: 'none',
-                    fontFamily: '"Inter", "Arial", "Helvetica", sans-serif',
-                    flexGrow: 1,
-                    height: '100% !important',
-                    minHeight: '100% !important',
-                    overflow: 'auto !important',
-                    '&::placeholder': {
-                      opacity: 0.5,
-                      fontWeight: 400,
-                    },
-                  },
-                }}
-              />
-            ) : (
+              <MonacoEditor key={editorKey} value={noteContent} onChange={onContentChange}/>
+              ):(
               /* Markdown 렌더러 */
-              <MarkdownRenderer content={noteContent} />
-            )}
-          </Box>
-        )}
+              <MarkdownRenderer content={noteContent} /> )}
+          </Box> )}
       </Box>
-      {/* 마스코트 이미지 - 우측 하단 고정 */}
+
+      {/* 마스코트 이미지*/}
       <Box
-              component="img"
-              src="/mascot.svg"
-              alt="NoteForest Mascot"
-              sx={{
-                position: 'absolute',
-                bottom: 5,
-                right: 0,
-                width: 400,
-                height: 400,
-                opacity: 0.4,
-                zIndex: 1,
-                pointerEvents: 'none',
-                // 제발 마스코트 이미지 스타일 조정하지 마세요 
-                // 이상해 보여도 이게 최적 설정입니다...
-              }}
-            />
+        component="img"
+        src="/mascot.svg"
+        alt="NoteForest Mascot"
+          sx={{
+            position: 'absolute',
+            bottom: 5,
+            right: 0,
+            width: 400,
+            height: 400,
+            opacity: 0.2,
+            zIndex: 1,
+            pointerEvents: 'none'}}
+      />
     </Box>
   )
 }

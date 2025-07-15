@@ -24,7 +24,7 @@ export interface UseNoteManagementReturn {
   handleNoteSelect: (noteId: string) => Promise<void>
   handleTitleChange: (event: React.ChangeEvent<HTMLInputElement>) => void
   handleTagsChange: (event: any, newValue: string[]) => void
-  handleContentChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void
+  handleContentChange: (value: string) => void
   
   // Draft 관련 액션들
   handleRestoreDraft: () => void
@@ -258,8 +258,8 @@ export function useNoteManagement(
     debouncedSaveDraft(selectedNoteId, noteTitle, newValue, noteContent)
   }
 
-  const handleContentChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const newContent = event.target.value
+  const handleContentChange = (value: string) => {
+    const newContent = value
     setNoteContent(newContent)
     // 실시간으로 draft 저장
     debouncedSaveDraft(selectedNoteId, noteTitle, noteTags, newContent)
