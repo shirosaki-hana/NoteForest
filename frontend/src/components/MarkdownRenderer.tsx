@@ -7,6 +7,7 @@ import rehypeKatex from 'rehype-katex'
 import rehypeQuoteHighlight from '../utils/rehypeQuoteHighlight'
 import { Box, alpha } from '@mui/material'
 import 'highlight.js/styles/github-dark.css'
+import 'katex/dist/katex.min.css'
 
 interface MarkdownRendererProps {
   content: string
