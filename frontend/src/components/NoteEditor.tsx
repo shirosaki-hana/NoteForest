@@ -2,34 +2,26 @@ import { Box, TextField, Chip, Stack, CircularProgress, Typography } from '@mui/
 import { useState } from 'react';
 import MarkdownRenderer from './MarkdownRenderer';
 import MonacoEditor from './MonacoEditor';
+import { useUiStore } from '../stores/uiStore';
+import { useNotesStore } from '../stores/notesStore';
 
-interface NoteEditorProps {
-  // 상태
-  noteTitle: string;
-  noteTags: string[];
-  noteContent: string;
-  editorKey: number;
-  loading: boolean;
-  isEditMode: boolean;
+// NoteEditor has no props; it reads state from stores directly
 
-  // 핸들러
-  onTitleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onTagsChange: (event: React.SyntheticEvent | null, newValue: string[]) => void;
-  onContentChange: (value: string) => void;
-}
-
-export default function NoteEditor({
-  noteTitle,
-  noteTags,
-  noteContent,
-  editorKey,
-  loading,
-  isEditMode,
-  onTitleChange,
-  onTagsChange,
-  onContentChange,
-}: NoteEditorProps) {
+export default function NoteEditor() {
   const [inputValue, setInputValue] = useState('');
+  const { isEditMode } = useUiStore();
+  const { title, tags, content, editorKey, loading, setTitle, setTags, setContent } = useNotesStore(
+    state => ({
+      title: state.title,
+      tags: state.tags,
+      content: state.content,
+      editorKey: state.editorKey,
+      loading: state.loading,
+      setTitle: state.setTitle,
+      setTags: state.setTags,
+      setContent: state.setContent,
+    })
+  );
 
   return (
     <Box
@@ -57,8 +49,8 @@ export default function NoteEditor({
               fullWidth
               variant='standard'
               placeholder='제목 없음'
-              value={noteTitle}
-              onChange={onTitleChange}
+              value={title}
+              onChange={e => setTitle(e.target.value)}
               slotProps={{
                 input: {
                   disableUnderline: true,
@@ -88,7 +80,7 @@ export default function NoteEditor({
                 padding: '8px 0',
               }}
             >
-              {noteTitle || '제목 없음'}
+              {title || '제목 없음'}
             </Typography>
           )}
 
@@ -96,17 +88,17 @@ export default function NoteEditor({
           {isEditMode ? (
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
               {/* 기존 태그들 표시 */}
-              {noteTags.length > 0 && (
+              {tags.length > 0 && (
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                  {noteTags.map((tag, index) => (
+                  {tags.map((tag, index) => (
                     <Chip
                       key={index}
                       variant='filled'
                       label={tag}
                       size='small'
                       onDelete={() => {
-                        const newTags = noteTags.filter((_, i) => i !== index);
-                        onTagsChange(null, newTags);
+                        const newTags = tags.filter((_, i) => i !== index);
+                        setTags(newTags);
                       }}
                       sx={{
                         height: '20px',
@@ -132,9 +124,9 @@ export default function NoteEditor({
                   // 쉼표가 입력되면 즉시 태그 추가
                   if (value.includes(',')) {
                     const tagText = value.replace(',', '').trim();
-                    if (tagText && !noteTags.includes(tagText)) {
-                      const newTags = [...noteTags, tagText];
-                      onTagsChange(null, newTags);
+                    if (tagText && !tags.includes(tagText)) {
+                      const newTags = [...tags, tagText];
+                      setTags(newTags);
                     }
                     setInputValue('');
                   } else {
@@ -145,14 +137,14 @@ export default function NoteEditor({
                   if (e.key === 'Tab' && inputValue.trim()) {
                     e.preventDefault();
                     const trimmedValue = inputValue.trim();
-                    if (!noteTags.includes(trimmedValue)) {
-                      const newTags = [...noteTags, trimmedValue];
-                      onTagsChange(null, newTags);
+                    if (!tags.includes(trimmedValue)) {
+                      const newTags = [...tags, trimmedValue];
+                      setTags(newTags);
                     }
                     setInputValue('');
-                  } else if (e.key === 'Backspace' && !inputValue && noteTags.length > 0) {
-                    const newTags = noteTags.slice(0, -1);
-                    onTagsChange(null, newTags);
+                  } else if (e.key === 'Backspace' && !inputValue && tags.length > 0) {
+                    const newTags = tags.slice(0, -1);
+                    setTags(newTags);
                   }
                 }}
                 slotProps={{
@@ -177,8 +169,8 @@ export default function NoteEditor({
             </Box>
           ) : (
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, padding: '4px 0' }}>
-              {noteTags.length > 0 ? (
-                noteTags.map((tag, index) => (
+              {tags.length > 0 ? (
+                tags.map((tag, index) => (
                   <Chip
                     key={index}
                     label={tag}
@@ -231,10 +223,10 @@ export default function NoteEditor({
           <Box sx={{ position: 'relative', flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
             {isEditMode ? (
               /* 텍스트 에디터 */
-              <MonacoEditor key={editorKey} value={noteContent} onChange={onContentChange} />
+              <MonacoEditor key={editorKey} value={content} onChange={setContent} />
             ) : (
               /* Markdown 렌더러 */
-              <MarkdownRenderer content={noteContent} />
+              <MarkdownRenderer content={content} />
             )}
           </Box>
         )}

@@ -9,31 +9,29 @@ import {
   LightMode as LightModeIcon,
   DarkMode as DarkModeIcon,
 } from '@mui/icons-material';
-import { useAuth } from '../hooks/useAuth';
-import { useTheme } from '../hooks/useTheme';
+import { useAuthStore } from '../stores/authStore';
+import { useThemeStore } from '../stores/themeStore';
 import { useState } from 'react';
 import NewNoteConfirmDialog from './NewNoteConfirmDialog';
+import { useUiStore } from '../stores/uiStore';
+import { useSnackbarStore } from '../stores/snackbarStore';
+import { useNotesStore } from '../stores/notesStore';
+import { useNavigate } from 'react-router-dom';
 
-interface HeaderProps {
-  onMenuToggle: () => void;
-  onNewNote?: () => void;
-  onSaveNote?: () => void;
-  saving?: boolean;
-  isEditMode?: boolean;
-  onToggleEditMode?: () => void;
-}
+interface HeaderProps {}
 
-export default function Header({
-  onMenuToggle,
-  onNewNote,
-  onSaveNote,
-  saving = false,
-  isEditMode = true,
-  onToggleEditMode,
-}: HeaderProps) {
-  const { logout } = useAuth();
-  const { mode, toggleMode } = useTheme();
+export default function Header({}: HeaderProps) {
+  const logout = useAuthStore(state => state.logout);
+  const { mode, toggleMode } = useThemeStore();
   const [showNewNoteDialog, setShowNewNoteDialog] = useState(false);
+  const navigate = useNavigate();
+  const { isEditMode, toggleSidebar, toggleEditMode } = useUiStore();
+  const { show } = useSnackbarStore();
+  const { saving, newNote, save } = useNotesStore(state => ({
+    saving: state.saving,
+    newNote: state.newNote,
+    save: state.save,
+  }));
 
   const handleNewNoteClick = () => {
     setShowNewNoteDialog(true);
@@ -41,7 +39,8 @@ export default function Header({
 
   const handleNewNoteConfirm = () => {
     setShowNewNoteDialog(false);
-    onNewNote?.();
+    const id = newNote(show);
+    navigate(`/notes/${id}`);
   };
 
   const handleNewNoteCancel = () => {
@@ -61,7 +60,7 @@ export default function Header({
           color='inherit'
           aria-label='toggle sidebar'
           edge='start'
-          onClick={onMenuToggle}
+          onClick={toggleSidebar}
           sx={{
             mr: 2,
           }}
@@ -89,7 +88,7 @@ export default function Header({
         <IconButton
           color='inherit'
           aria-label={isEditMode ? 'switch to preview mode' : 'switch to edit mode'}
-          onClick={onToggleEditMode}
+          onClick={toggleEditMode}
           sx={{
             mr: 1,
           }}
@@ -111,7 +110,7 @@ export default function Header({
         <IconButton
           color='inherit'
           aria-label='save note'
-          onClick={onSaveNote}
+          onClick={() => save(show)}
           disabled={saving || !isEditMode} // 읽기 모드에서는 저장 비활성화
           sx={{
             mr: 1,

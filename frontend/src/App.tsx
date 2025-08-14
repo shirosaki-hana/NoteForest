@@ -1,151 +1,44 @@
-import { useState } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
-import { CssBaseline, Box, CircularProgress } from '@mui/material';
-import { AuthProvider, useAuth } from './hooks/useAuth';
-import { ThemeProvider as AppThemeProvider, useTheme } from './hooks/useTheme';
-import LoginPage from './components/LoginPage';
-import Header from './components/Header';
-import Sidebar from './components/Sidebar';
-import NoteEditor from './components/NoteEditor';
-import NotificationSnackbar from './components/NotificationSnackbar';
-import DraftRestoreDialog from './components/DraftRestoreDialog';
+import { CssBaseline } from '@mui/material';
+import { useThemeStore } from './stores/themeStore';
 import { createAppTheme } from './theme';
-import { useNoteManagement } from './hooks/useNoteManagement';
-import { useSnackbar } from './hooks/useSnackbar';
-import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import LoginPage from './components/LoginPage';
+import ProtectedRoute from './routes/ProtectedRoute';
+import NotesPage from './routes/NotesPage';
+import NewNoteRedirect from './routes/NewNoteRedirect';
 
-function AppContent() {
-  const { isAuthenticated, isLoading } = useAuth();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [isEditMode, setIsEditMode] = useState(true);
-
-  // 스낵바 관리
-  const { snackbarOpen, snackbarMessage, snackbarSeverity, showSnackbar, handleSnackbarClose } =
-    useSnackbar();
-
-  // 노트 관리
-  const {
-    selectedNoteId,
-    noteTitle,
-    noteTags,
-    noteContent,
-    editorKey,
-    saving,
-    loading,
-    showDraftDialog,
-    draftData,
-    handleNewNote,
-    handleSaveNote,
-    handleNoteSelect,
-    handleTitleChange,
-    handleTagsChange,
-    handleContentChange,
-    handleRestoreDraft,
-    handleDiscardDraft,
-    handleCancelDraftDialog,
-  } = useNoteManagement(showSnackbar);
-
-  // 키보드 단축키
-  useKeyboardShortcuts({
-    onSave: handleSaveNote,
-    saving,
-  });
-
-  const handleMenuToggle = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
-
-  const handleToggleEditMode = () => {
-    setIsEditMode(!isEditMode);
-  };
-
-  if (isLoading) {
-    return (
-      <Box
-        display='flex'
-        justifyContent='center'
-        alignItems='center'
-        minHeight='100vh'
-        bgcolor='background.default'
-      >
-        <CircularProgress />
-      </Box>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return <LoginPage />;
-  }
-
+function AppRoutes() {
   return (
-    <>
-      <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-        <Header
-          onMenuToggle={handleMenuToggle}
-          onNewNote={handleNewNote}
-          onSaveNote={handleSaveNote}
-          saving={saving}
-          isEditMode={isEditMode}
-          onToggleEditMode={handleToggleEditMode}
-        />
-
-        <Sidebar
-          isOpen={sidebarOpen}
-          onToggle={handleMenuToggle}
-          selectedNoteId={selectedNoteId}
-          onNoteSelect={handleNoteSelect}
-        />
-
-        <NoteEditor
-          noteTitle={noteTitle}
-          noteTags={noteTags}
-          noteContent={noteContent}
-          editorKey={editorKey}
-          loading={loading}
-          isEditMode={isEditMode}
-          onTitleChange={handleTitleChange}
-          onTagsChange={handleTagsChange}
-          onContentChange={handleContentChange}
-        />
-        <NotificationSnackbar
-          open={snackbarOpen}
-          message={snackbarMessage}
-          severity={snackbarSeverity}
-          onClose={handleSnackbarClose}
-        />
-
-        <DraftRestoreDialog
-          open={showDraftDialog}
-          draftData={draftData}
-          onRestore={handleRestoreDraft}
-          onDiscard={handleDiscardDraft}
-          onCancel={handleCancelDraftDialog}
-        />
-      </Box>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path='/' element={<Navigate to='/notes/new' replace />} />
+        <Route path='/auth/login' element={<LoginPage />} />
+        <Route path='/auth/setup' element={<LoginPage />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path='/notes/new' element={<NewNoteRedirect />} />
+          <Route path='/notes/:id' element={<NotesPage />} />
+        </Route>
+        <Route path='*' element={<Navigate to='/' replace />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
 function ThemedApp() {
-  const { mode } = useTheme();
+  const { mode } = useThemeStore();
   const theme = createAppTheme(mode);
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <AuthProvider>
-        <AppContent />
-      </AuthProvider>
+      <AppRoutes />
     </ThemeProvider>
   );
 }
 
 function App() {
-  return (
-    <AppThemeProvider>
-      <ThemedApp />
-    </AppThemeProvider>
-  );
+  return <ThemedApp />;
 }
 
 export default App;
