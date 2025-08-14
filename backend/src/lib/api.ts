@@ -2,6 +2,7 @@ import path from 'path';
 import fs from 'fs/promises';
 import { Router, Request, Response } from 'express';
 import matter from 'gray-matter';
+import { logger } from './log';
 
 const DATABASE_DIR = path.join(__dirname, '../../database');
 const apiRouter = Router();
@@ -34,7 +35,7 @@ apiRouter.post('/write', async (req: Request, res: Response): Promise<void> => {
     if (!uuid || !title || !body) {
       res.status(400).json({
         success: false,
-        error: 'uuid, title, body는 필수 필드입니다.' // id -> uuid
+        error: 'uuid, title, body는 필수 필드입니다.', // id -> uuid
       });
       return;
     }
@@ -43,7 +44,7 @@ apiRouter.post('/write', async (req: Request, res: Response): Promise<void> => {
     if (!isValidUUID(uuid)) {
       res.status(400).json({
         success: false,
-        error: '유효하지 않은 UUID 형식입니다.'
+        error: '유효하지 않은 UUID 형식입니다.',
       });
       return;
     }
@@ -54,7 +55,7 @@ apiRouter.post('/write', async (req: Request, res: Response): Promise<void> => {
       title,
       createdAt: createdAt || now, // createdAt은 요청 시 없으면 현재 시간, 있으면 해당 값 사용
       updatedAt: now, // updatedAt은 항상 현재 시간으로 갱신
-      tags: Array.isArray(tags) ? tags : []
+      tags: Array.isArray(tags) ? tags : [],
     });
 
     // 파일 경로 생성
@@ -65,14 +66,13 @@ apiRouter.post('/write', async (req: Request, res: Response): Promise<void> => {
     res.json({
       success: true,
       message: '메모가 성공적으로 저장되었습니다.',
-      uuid // fileId -> uuid
+      uuid, // fileId -> uuid
     });
-
   } catch (error) {
-    console.error('메모 저장 오류:', error);
+    logger.error('메모 저장 오류:', error);
     res.status(500).json({
       success: false,
-      error: '메모 저장 중 오류가 발생했습니다.'
+      error: '메모 저장 중 오류가 발생했습니다.',
     });
   }
 });
@@ -86,7 +86,7 @@ apiRouter.get('/read/:uuid', async (req: Request, res: Response): Promise<void> 
     if (!isValidUUID(uuid)) {
       res.status(400).json({
         success: false,
-        error: '유효하지 않은 UUID 형식입니다.'
+        error: '유효하지 않은 UUID 형식입니다.',
       });
       return;
     }
@@ -100,7 +100,7 @@ apiRouter.get('/read/:uuid', async (req: Request, res: Response): Promise<void> 
     } catch {
       res.status(404).json({
         success: false,
-        error: '요청한 메모를 찾을 수 없습니다.'
+        error: '요청한 메모를 찾을 수 없습니다.',
       });
       return;
     }
@@ -117,15 +117,14 @@ apiRouter.get('/read/:uuid', async (req: Request, res: Response): Promise<void> 
         tags: metadata.tags || [],
         createdAt: metadata.createdAt || '',
         updatedAt: metadata.updatedAt || '',
-        body: body.trim()
-      }
+        body: body.trim(),
+      },
     });
-
   } catch (error) {
-    console.error('메모 읽기 오류:', error);
+    logger.error('메모 읽기 오류:', error);
     res.status(500).json({
       success: false,
-      error: '메모를 읽는 중 오류가 발생했습니다.'
+      error: '메모를 읽는 중 오류가 발생했습니다.',
     });
   }
 });
@@ -148,7 +147,7 @@ apiRouter.get('/list', async (req: Request, res: Response): Promise<void> => {
 
         // UUID 형식 검증
         if (!isValidUUID(uuid)) {
-          console.warn(`Skipping file with invalid UUID format: ${file}`);
+          logger.warn(`Skipping file with invalid UUID format: ${file}`);
           continue; // UUID 형식이 아닌 파일은 건너뛰기
         }
 
@@ -163,11 +162,10 @@ apiRouter.get('/list', async (req: Request, res: Response): Promise<void> => {
           title: metadata.title || '',
           tags: metadata.tags || [],
           createdAt: metadata.createdAt || '',
-          updatedAt: metadata.updatedAt || ''
+          updatedAt: metadata.updatedAt || '',
         });
-
       } catch (error) {
-        console.error(`파일 ${file} 처리 중 오류:`, error);
+        logger.error(`파일 ${file} 처리 중 오류:`, error);
         // 개별 파일 오류는 건너뛰고 계속 진행
         continue;
       }
@@ -189,14 +187,13 @@ apiRouter.get('/list', async (req: Request, res: Response): Promise<void> => {
     res.json({
       success: true,
       data: memoList,
-      count: memoList.length
+      count: memoList.length,
     });
-
   } catch (error) {
-    console.error('메모 목록 조회 오류:', error);
+    logger.error('메모 목록 조회 오류:', error);
     res.status(500).json({
       success: false,
-      error: '메모 목록을 조회하는 중 오류가 발생했습니다.'
+      error: '메모 목록을 조회하는 중 오류가 발생했습니다.',
     });
   }
 });
@@ -210,7 +207,7 @@ apiRouter.delete('/:uuid', async (req: Request, res: Response): Promise<void> =>
     if (!isValidUUID(uuid)) {
       res.status(400).json({
         success: false,
-        error: '유효하지 않은 UUID 형식입니다.'
+        error: '유효하지 않은 UUID 형식입니다.',
       });
       return;
     }
@@ -224,7 +221,7 @@ apiRouter.delete('/:uuid', async (req: Request, res: Response): Promise<void> =>
     } catch {
       res.status(404).json({
         success: false,
-        error: '삭제하려는 메모를 찾을 수 없습니다.'
+        error: '삭제하려는 메모를 찾을 수 없습니다.',
       });
       return;
     }
@@ -235,14 +232,13 @@ apiRouter.delete('/:uuid', async (req: Request, res: Response): Promise<void> =>
     res.json({
       success: true,
       message: '메모가 성공적으로 삭제되었습니다.',
-      deletedUuid: uuid // deletedId -> deletedUuid
+      deletedUuid: uuid, // deletedId -> deletedUuid
     });
-
   } catch (error) {
-    console.error('메모 삭제 오류:', error);
+    logger.error('메모 삭제 오류:', error);
     res.status(500).json({
       success: false,
-      error: '메모를 삭제하는 중 오류가 발생했습니다.'
+      error: '메모를 삭제하는 중 오류가 발생했습니다.',
     });
   }
 });

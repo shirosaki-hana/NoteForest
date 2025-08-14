@@ -5,7 +5,7 @@ import path from 'path';
 import cookieParser from 'cookie-parser';
 import { requireAuth, authRouter } from './lib/auth';
 import { apiRouter } from './lib/api';
-import { writelog } from './lib/log';
+import { logger } from './lib/log';
 import { Request, Response } from 'express';
 
 dotenv.config();
@@ -35,5 +35,5 @@ app.get('/', (req: Request, res: Response) => {
 
 // 서버 리스닝
 app.listen(PORT, () => {
-  writelog('server', `Server is running on http://127.0.0.1:${PORT}`);
+  logger.success(`Server is running on http://127.0.0.1:${PORT}`);
 });

@@ -1,13 +1,21 @@
-import { Box, Typography, Chip, IconButton, ListItem, ListItemButton, ListItemText } from '@mui/material'
-import { Schedule as ScheduleIcon, Delete as DeleteIcon } from '@mui/icons-material'
-import type { Note } from '../types/api'
-import { formatDate } from '../utils/dateFormat'
+import {
+  Box,
+  Typography,
+  Chip,
+  IconButton,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+} from '@mui/material';
+import { Schedule as ScheduleIcon, Delete as DeleteIcon } from '@mui/icons-material';
+import type { Note } from '../types/api';
+import { formatDate } from '../utils/dateFormat';
 
 interface NoteListItemProps {
-  note: Note
-  isSelected: boolean
-  onSelect: (noteId: string) => void
-  onDelete: (note: Note, event: React.MouseEvent) => void
+  note: Note;
+  isSelected: boolean;
+  onSelect: (noteId: string) => void;
+  onDelete: (note: Note, event: React.MouseEvent) => void;
 }
 
 export default function NoteListItem({ note, isSelected, onSelect, onDelete }: NoteListItemProps) {
@@ -25,14 +33,14 @@ export default function NoteListItem({ note, isSelected, onSelect, onDelete }: N
       >
         <ListItemText
           primary={
-            <Typography 
-              variant="subtitle2" 
-              sx={{ 
+            <Typography
+              variant='subtitle2'
+              sx={{
                 fontWeight: 500,
                 mb: 0.5,
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap'
+                whiteSpace: 'nowrap',
               }}
             >
               {note.title || '제목 없음'}
@@ -47,60 +55,56 @@ export default function NoteListItem({ note, isSelected, onSelect, onDelete }: N
                     <Chip
                       key={index}
                       label={tag}
-                      size="small"
+                      size='small'
                       sx={{
                         height: 20,
                         fontSize: '0.75rem',
-                        '& .MuiChip-label': { px: 1 }
+                        '& .MuiChip-label': { px: 1 },
                       }}
                     />
                   ))}
                   {note.tags.length > 3 && (
                     <Chip
                       label={`+${note.tags.length - 3}`}
-                      size="small"
+                      size='small'
                       sx={{
                         height: 20,
                         fontSize: '0.75rem',
-                        '& .MuiChip-label': { px: 1 }
+                        '& .MuiChip-label': { px: 1 },
                       }}
                     />
                   )}
                 </Box>
               )}
-              
+
               {/* 날짜 정보 */}
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                 <ScheduleIcon sx={{ fontSize: '0.75rem' }} />
-                <Typography 
-                  variant="caption" 
-                >
-                  {formatDate(note.updatedAt)}
-                </Typography>
+                <Typography variant='caption'>{formatDate(note.updatedAt)}</Typography>
               </Box>
             </Box>
           }
         />
-        
+
         {/* 삭제 버튼 */}
         <IconButton
-          size="small"
-          onClick={(e) => onDelete(note, e)}
+          size='small'
+          onClick={e => onDelete(note, e)}
           sx={{
             ml: 1,
             opacity: 0.7,
             transition: 'all 0.2s ease',
             '&:hover': {
               color: 'error.main',
-              backgroundColor: (theme) => theme.palette.error.main + '1A',
+              backgroundColor: theme => theme.palette.error.main + '1A',
               opacity: 1,
               transform: 'scale(1.1)',
             },
           }}
         >
-          <DeleteIcon fontSize="small" />
+          <DeleteIcon fontSize='small' />
         </IconButton>
       </ListItemButton>
     </ListItem>
-  )
+  );
 }

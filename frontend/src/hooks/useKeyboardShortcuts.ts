@@ -1,27 +1,31 @@
-import { useEffect } from 'react'
+import { useEffect } from 'react';
 
 interface UseKeyboardShortcutsProps {
-  onSave: () => void
-  saving: boolean
-  enabled?: boolean
+  onSave: () => void;
+  saving: boolean;
+  enabled?: boolean;
 }
 
-export function useKeyboardShortcuts({ onSave, saving, enabled = true }: UseKeyboardShortcutsProps) {
+export function useKeyboardShortcuts({
+  onSave,
+  saving,
+  enabled = true,
+}: UseKeyboardShortcutsProps) {
   useEffect(() => {
-    if (!enabled) return
+    if (!enabled) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.ctrlKey && event.key === 's') {
-        event.preventDefault()
+        event.preventDefault();
         if (!saving) {
-          onSave()
+          onSave();
         }
       }
-    }
+    };
 
-    document.addEventListener('keydown', handleKeyDown)
+    document.addEventListener('keydown', handleKeyDown);
     return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [onSave, saving, enabled])
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [onSave, saving, enabled]);
 }

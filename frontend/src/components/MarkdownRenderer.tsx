@@ -1,16 +1,16 @@
-import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
-import rehypeHighlight from 'rehype-highlight'
-import rehypeRaw from 'rehype-raw'
-import remarkMath from 'remark-math'
-import rehypeKatex from 'rehype-katex'
-import rehypeQuoteHighlight from '../utils/rehypeQuoteHighlight'
-import { Box, alpha } from '@mui/material'
-import 'highlight.js/styles/github-dark.css'
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeHighlight from 'rehype-highlight';
+import rehypeRaw from 'rehype-raw';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import rehypeQuoteHighlight from '../utils/rehypeQuoteHighlight';
+import { Box, alpha } from '@mui/material';
+import 'highlight.js/styles/github-dark.css';
 //import 'katex/dist/katex.min.css' 이거 왜 안되노?
 
 interface MarkdownRendererProps {
-  content: string
+  content: string;
 }
 
 export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
@@ -28,10 +28,10 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
           fontWeight: 500,
           borderRadius: '3px',
           padding: '0 2px',
-          backgroundColor: (theme) => alpha(theme.palette.info.main, 0.08),
+          backgroundColor: theme => alpha(theme.palette.info.main, 0.08),
           transition: 'all 0.2s ease-in-out',
           '&:hover': {
-            backgroundColor: (theme) => alpha(theme.palette.info.main, 0.12),
+            backgroundColor: theme => alpha(theme.palette.info.main, 0.12),
           },
         },
         '& code': {
@@ -108,7 +108,6 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
             color: 'secondary.main',
           },
         },
-
       }}
     >
       <ReactMarkdown
@@ -118,5 +117,5 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
         {content || '*내용이 없습니다.*'}
       </ReactMarkdown>
     </Box>
-  )
-} 
+  );
+}

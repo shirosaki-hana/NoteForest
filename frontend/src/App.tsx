@@ -1,27 +1,28 @@
-import { useState } from 'react'
-import { ThemeProvider } from '@mui/material/styles'
-import { CssBaseline, Box, CircularProgress } from '@mui/material'
-import { AuthProvider, useAuth } from './hooks/useAuth'
-import { ThemeProvider as AppThemeProvider, useTheme } from './hooks/useTheme'
-import LoginPage from './components/LoginPage'
-import Header from './components/Header'
-import Sidebar from './components/Sidebar'
-import NoteEditor from './components/NoteEditor'
-import NotificationSnackbar from './components/NotificationSnackbar'
-import DraftRestoreDialog from './components/DraftRestoreDialog'
-import { createAppTheme } from './theme'
-import { useNoteManagement } from './hooks/useNoteManagement'
-import { useSnackbar } from './hooks/useSnackbar'
-import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
+import { useState } from 'react';
+import { ThemeProvider } from '@mui/material/styles';
+import { CssBaseline, Box, CircularProgress } from '@mui/material';
+import { AuthProvider, useAuth } from './hooks/useAuth';
+import { ThemeProvider as AppThemeProvider, useTheme } from './hooks/useTheme';
+import LoginPage from './components/LoginPage';
+import Header from './components/Header';
+import Sidebar from './components/Sidebar';
+import NoteEditor from './components/NoteEditor';
+import NotificationSnackbar from './components/NotificationSnackbar';
+import DraftRestoreDialog from './components/DraftRestoreDialog';
+import { createAppTheme } from './theme';
+import { useNoteManagement } from './hooks/useNoteManagement';
+import { useSnackbar } from './hooks/useSnackbar';
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 
 function AppContent() {
   const { isAuthenticated, isLoading } = useAuth();
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [isEditMode, setIsEditMode] = useState(true)
-  
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(true);
+
   // 스낵바 관리
-  const { snackbarOpen, snackbarMessage, snackbarSeverity, showSnackbar, handleSnackbarClose } = useSnackbar()
-  
+  const { snackbarOpen, snackbarMessage, snackbarSeverity, showSnackbar, handleSnackbarClose } =
+    useSnackbar();
+
   // 노트 관리
   const {
     selectedNoteId,
@@ -42,30 +43,30 @@ function AppContent() {
     handleRestoreDraft,
     handleDiscardDraft,
     handleCancelDraftDialog,
-  } = useNoteManagement(showSnackbar)
-  
+  } = useNoteManagement(showSnackbar);
+
   // 키보드 단축키
   useKeyboardShortcuts({
     onSave: handleSaveNote,
     saving,
-  })
+  });
 
   const handleMenuToggle = () => {
-    setSidebarOpen(!sidebarOpen)
-  }
+    setSidebarOpen(!sidebarOpen);
+  };
 
   const handleToggleEditMode = () => {
-    setIsEditMode(!isEditMode)
-  }
+    setIsEditMode(!isEditMode);
+  };
 
   if (isLoading) {
     return (
-      <Box 
-        display="flex" 
-        justifyContent="center" 
-        alignItems="center" 
-        minHeight="100vh"
-        bgcolor="background.default"
+      <Box
+        display='flex'
+        justifyContent='center'
+        alignItems='center'
+        minHeight='100vh'
+        bgcolor='background.default'
       >
         <CircularProgress />
       </Box>
@@ -79,7 +80,7 @@ function AppContent() {
   return (
     <>
       <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-        <Header 
+        <Header
           onMenuToggle={handleMenuToggle}
           onNewNote={handleNewNote}
           onSaveNote={handleSaveNote}
@@ -87,8 +88,8 @@ function AppContent() {
           isEditMode={isEditMode}
           onToggleEditMode={handleToggleEditMode}
         />
-        
-        <Sidebar 
+
+        <Sidebar
           isOpen={sidebarOpen}
           onToggle={handleMenuToggle}
           selectedNoteId={selectedNoteId}
@@ -105,14 +106,14 @@ function AppContent() {
           onTitleChange={handleTitleChange}
           onTagsChange={handleTagsChange}
           onContentChange={handleContentChange}
-        />        
+        />
         <NotificationSnackbar
           open={snackbarOpen}
           message={snackbarMessage}
           severity={snackbarSeverity}
           onClose={handleSnackbarClose}
         />
-        
+
         <DraftRestoreDialog
           open={showDraftDialog}
           draftData={draftData}
@@ -122,13 +123,13 @@ function AppContent() {
         />
       </Box>
     </>
-  )
+  );
 }
 
 function ThemedApp() {
   const { mode } = useTheme();
   const theme = createAppTheme(mode);
-  
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -136,7 +137,7 @@ function ThemedApp() {
         <AppContent />
       </AuthProvider>
     </ThemeProvider>
-  )
+  );
 }
 
 function App() {
@@ -144,7 +145,7 @@ function App() {
     <AppThemeProvider>
       <ThemedApp />
     </AppThemeProvider>
-  )
+  );
 }
 
-export default App
+export default App;

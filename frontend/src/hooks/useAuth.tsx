@@ -29,7 +29,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const checkPasswordStatus = async () => {
     try {
       const response = await fetch('/auth/status', {
-        credentials: 'include'
+        credentials: 'include',
       });
       const data = await response.json();
       setIsPasswordSet(data.passwordSet);
@@ -41,7 +41,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const checkAuth = async () => {
     try {
       const response = await fetch('/auth/check', {
-        credentials: 'include'
+        credentials: 'include',
       });
       setIsAuthenticated(response.ok);
     } catch {
@@ -57,11 +57,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ password })
+        body: JSON.stringify({ password }),
       });
-      
+
       const data = await response.json();
-      
+
       if (response.ok) {
         setIsAuthenticated(true);
         return { success: true };
@@ -79,11 +79,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ password })
+        body: JSON.stringify({ password }),
       });
-      
+
       const data = await response.json();
-      
+
       if (response.ok) {
         setIsAuthenticated(true);
         setIsPasswordSet(true);
@@ -100,7 +100,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await fetch('/auth/logout', {
         method: 'POST',
-        credentials: 'include'
+        credentials: 'include',
       });
     } finally {
       setIsAuthenticated(false);
@@ -116,16 +116,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ 
-      isAuthenticated, 
-      isLoading, 
-      isPasswordSet,
-      login, 
-      setupPassword,
-      logout, 
-      checkAuth,
-      checkPasswordStatus 
-    }}>
+    <AuthContext.Provider
+      value={{
+        isAuthenticated,
+        isLoading,
+        isPasswordSet,
+        login,
+        setupPassword,
+        logout,
+        checkAuth,
+        checkPasswordStatus,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

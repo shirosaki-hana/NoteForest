@@ -4,17 +4,17 @@
  * @returns 포맷팅된 날짜 문자열
  */
 export function formatDate(dateString: string): string {
-  const date = new Date(dateString)
-  const now = new Date()
-  const diffInDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24))
-  
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffInDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
+
   if (diffInDays === 0) {
-    return date.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })
+    return date.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
   } else if (diffInDays === 1) {
-    return '어제'
+    return '어제';
   } else if (diffInDays < 7) {
-    return `${diffInDays}일 전`
+    return `${diffInDays}일 전`;
   } else {
-    return date.toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })
+    return date.toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' });
   }
 }

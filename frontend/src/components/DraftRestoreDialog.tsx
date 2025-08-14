@@ -7,22 +7,22 @@ import {
   Typography,
   Box,
   Chip,
-} from '@mui/material'
-import { RestorePageOutlined, DeleteOutline } from '@mui/icons-material'
+} from '@mui/material';
+import { RestorePageOutlined, DeleteOutline } from '@mui/icons-material';
 
 interface DraftData {
-  title: string
-  tags: string[]
-  content: string
-  lastModified: number
+  title: string;
+  tags: string[];
+  content: string;
+  lastModified: number;
 }
 
 interface DraftRestoreDialogProps {
-  open: boolean
-  draftData: DraftData | null
-  onRestore: () => void
-  onDiscard: () => void
-  onCancel: () => void
+  open: boolean;
+  draftData: DraftData | null;
+  onRestore: () => void;
+  onDiscard: () => void;
+  onCancel: () => void;
 }
 
 export default function DraftRestoreDialog({
@@ -32,7 +32,7 @@ export default function DraftRestoreDialog({
   onDiscard,
   onCancel,
 }: DraftRestoreDialogProps) {
-  if (!draftData) return null
+  if (!draftData) return null;
 
   const formatDate = (timestamp: number) => {
     return new Date(timestamp).toLocaleString('ko-KR', {
@@ -41,20 +41,20 @@ export default function DraftRestoreDialog({
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
-    })
-  }
+    });
+  };
 
   const getContentPreview = (content: string) => {
-    const lines = content.split('\n').filter(line => line.trim())
-    const preview = lines.slice(0, 3).join(' ').substring(0, 100)
-    return preview + (preview.length >= 100 ? '...' : '')
-  }
+    const lines = content.split('\n').filter(line => line.trim());
+    const preview = lines.slice(0, 3).join(' ').substring(0, 100);
+    return preview + (preview.length >= 100 ? '...' : '');
+  };
 
   return (
     <Dialog
       open={open}
       onClose={onCancel}
-      maxWidth="sm"
+      maxWidth='sm'
       fullWidth
       sx={{
         '& .MuiDialog-paper': {
@@ -72,7 +72,7 @@ export default function DraftRestoreDialog({
       </DialogTitle>
 
       <DialogContent>
-        <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
+        <Typography variant='body2' sx={{ color: 'text.secondary', mb: 2 }}>
           이 노트에 저장되지 않은 편집 내용이 있습니다. 복원하시겠습니까?
         </Typography>
 
@@ -88,7 +88,7 @@ export default function DraftRestoreDialog({
         >
           {/* 제목 */}
           <Typography
-            variant="subtitle2"
+            variant='subtitle2'
             sx={{
               color: 'text.primary',
               fontWeight: 600,
@@ -106,7 +106,7 @@ export default function DraftRestoreDialog({
                 <Chip
                   key={index}
                   label={tag}
-                  size="small"
+                  size='small'
                   sx={{
                     height: '18px',
                     fontSize: '0.7rem',
@@ -120,7 +120,7 @@ export default function DraftRestoreDialog({
 
           {/* 내용 미리보기 */}
           <Typography
-            variant="body2"
+            variant='body2'
             sx={{
               color: 'text.secondary',
               fontSize: '0.85rem',
@@ -133,7 +133,7 @@ export default function DraftRestoreDialog({
 
           {/* 수정 시간 */}
           <Typography
-            variant="caption"
+            variant='caption'
             sx={{
               color: 'text.disabled',
               display: 'block',
@@ -164,7 +164,7 @@ export default function DraftRestoreDialog({
           sx={{
             color: 'error.main',
             '&:hover': {
-              backgroundColor: (theme) => theme.palette.error.main + '1A',
+              backgroundColor: theme => theme.palette.error.main + '1A',
             },
           }}
         >
@@ -173,7 +173,7 @@ export default function DraftRestoreDialog({
         <Button
           onClick={onRestore}
           startIcon={<RestorePageOutlined />}
-          variant="contained"
+          variant='contained'
           sx={{
             backgroundColor: 'primary.main',
             color: 'primary.contrastText',
@@ -186,5 +186,5 @@ export default function DraftRestoreDialog({
         </Button>
       </DialogActions>
     </Dialog>
-  )
-} 
+  );
+}

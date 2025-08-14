@@ -1,11 +1,11 @@
-import { Drawer, Box } from '@mui/material'
-import { useNoteList } from '../hooks/useNoteList'
-import { useNoteDelete } from '../hooks/useNoteDelete'
-import { useSnackbar } from '../hooks/useSnackbar'
-import SidebarHeader from './SidebarHeader'
-import NoteListContent from './NoteListContent'
-import DeleteConfirmDialog from './DeleteConfirmDialog'
-import NotificationSnackbar from './NotificationSnackbar'
+import { Drawer, Box } from '@mui/material';
+import { useNoteList } from '../hooks/useNoteList';
+import { useNoteDelete } from '../hooks/useNoteDelete';
+import { useSnackbar } from '../hooks/useSnackbar';
+import SidebarHeader from './SidebarHeader';
+import NoteListContent from './NoteListContent';
+import DeleteConfirmDialog from './DeleteConfirmDialog';
+import NotificationSnackbar from './NotificationSnackbar';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -14,15 +14,16 @@ interface SidebarProps {
   onNoteSelect?: (noteId: string) => void;
 }
 
-const SIDEBAR_WIDTH = 340
+const SIDEBAR_WIDTH = 340;
 
 export default function Sidebar({ isOpen, onToggle, selectedNoteId, onNoteSelect }: SidebarProps) {
   // 메모 목록 관리
-  const { notes, loading, error, refetchNotes } = useNoteList(isOpen)
-  
+  const { notes, loading, error, refetchNotes } = useNoteList(isOpen);
+
   // 스낵바 관리
-  const { snackbarOpen, snackbarMessage, snackbarSeverity, showSnackbar, handleSnackbarClose } = useSnackbar()
-  
+  const { snackbarOpen, snackbarMessage, snackbarSeverity, showSnackbar, handleSnackbarClose } =
+    useSnackbar();
+
   // 삭제 기능 관리
   const {
     deleteDialogOpen,
@@ -36,16 +37,15 @@ export default function Sidebar({ isOpen, onToggle, selectedNoteId, onNoteSelect
     onNoteSelect,
     onDeleteSuccess: refetchNotes,
     showMessage: showSnackbar,
-  })
+  });
 
   const drawerContent = (
-    <Box sx={{ 
-      width: SIDEBAR_WIDTH, 
-    }}>
-      <SidebarHeader 
-        notesCount={notes.length}
-        onClose={onToggle}
-      />
+    <Box
+      sx={{
+        width: SIDEBAR_WIDTH,
+      }}
+    >
+      <SidebarHeader notesCount={notes.length} onClose={onToggle} />
 
       {/* 메모 목록 */}
       <Box sx={{ flexGrow: 1, overflow: 'auto' }}>
@@ -59,13 +59,13 @@ export default function Sidebar({ isOpen, onToggle, selectedNoteId, onNoteSelect
         />
       </Box>
     </Box>
-  )
+  );
 
   return (
     <>
       {/* 모든 화면 크기에서 임시 드로어 (오버레이 방식) */}
       <Drawer
-        variant="temporary"
+        variant='temporary'
         open={isOpen}
         onClose={onToggle}
         ModalProps={{
@@ -82,7 +82,6 @@ export default function Sidebar({ isOpen, onToggle, selectedNoteId, onNoteSelect
       >
         {drawerContent}
       </Drawer>
-
       {/* 삭제 확인 다이얼로그 */}
       <DeleteConfirmDialog
         open={deleteDialogOpen}
@@ -90,7 +89,8 @@ export default function Sidebar({ isOpen, onToggle, selectedNoteId, onNoteSelect
         deleting={deleting}
         onConfirm={handleDeleteConfirm}
         onCancel={handleDeleteCancel}
-      />      {/* 스낵바 */}
+      />{' '}
+      {/* 스낵바 */}
       <NotificationSnackbar
         open={snackbarOpen}
         message={snackbarMessage}
@@ -99,5 +99,5 @@ export default function Sidebar({ isOpen, onToggle, selectedNoteId, onNoteSelect
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
       />
     </>
-  )
+  );
 }
