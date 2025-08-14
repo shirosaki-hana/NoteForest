@@ -81,7 +81,7 @@ const limiter = rateLimit({
   windowMs: 900000,
   max: 5,
   handler: (req, res) => {
-    res.status(429).json({ error: 'TOO_MANY_LOGIN_ATTEMPTS' });
+    res.status(429).json({ error: '너무 많이 시도 했어요.' });
   },
 });
 
@@ -117,7 +117,7 @@ authRouter.post('/setup', limiter, async (req: Request, res: Response) => {
 
   try {
     await fs.access(PASSWORD_FILE);
-    res.status(400).json({ error: '비밀번호가 이미 설정되어 있습니다.' });
+    res.status(400).json({ error: '비밀번호가 이미 설정되어 있어요.' });
     return;
   } catch {
     // 파일이 없으면 비밀번호 설정 진행
@@ -126,7 +126,7 @@ authRouter.post('/setup', limiter, async (req: Request, res: Response) => {
   const { password } = req.body;
 
   if (!password || password.length < 8) {
-    res.status(400).json({ error: '비밀번호는 8자 이상이어야 합니다.' });
+    res.status(400).json({ error: '비밀번호는 8자 이상이어야 해요.' });
     return;
   }
 
@@ -142,7 +142,7 @@ authRouter.post('/setup', limiter, async (req: Request, res: Response) => {
     logger.log(`Session created: ${token} for IP: ${clientIP}`);
   } catch (e) {
     logger.error('Password set error:', e);
-    res.status(500).json({ error: '오류가 발생했습니다.' });
+    res.status(500).json({ error: '오류가 발생했어요.' });
   }
 });
 
@@ -156,7 +156,7 @@ authRouter.post('/login', limiter, async (req: Request, res: Response) => {
   try {
     await fs.access(PASSWORD_FILE);
   } catch {
-    res.status(400).json({ error: '비밀번호가 설정되지 않았습니다.' });
+    res.status(400).json({ error: '비밀번호가 설정되지 않았어요.' });
     return;
   }
 
@@ -174,7 +174,7 @@ authRouter.post('/login', limiter, async (req: Request, res: Response) => {
 
     if (!ok) {
       logger.warn(`Login fail(wrong password) from : ${clientIP}`);
-      res.status(401).json({ error: '비밀번호가 틀렸습니다.' });
+      res.status(401).json({ error: '비밀번호가 틀렸어요.' });
       return;
     }
 
@@ -187,7 +187,7 @@ authRouter.post('/login', limiter, async (req: Request, res: Response) => {
     res.json({ success: true });
   } catch (e) {
     logger.error('Login error:', e);
-    res.status(500).json({ error: '로그인 처리 중 오류가 발생했습니다.' });
+    res.status(500).json({ error: '로그인 처리 중 오류가 발생했어요.' });
   }
 });
 
