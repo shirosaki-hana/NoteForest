@@ -1,8 +1,15 @@
-import Editor, { type Monaco } from '@monaco-editor/react';
+import Editor, { type Monaco, loader } from '@monaco-editor/react';
 import { Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import tomorrowTheme from 'monaco-themes/themes/Tomorrow.json';
 import tomorrowThemeDark from 'monaco-themes/themes/Tomorrow-Night.json';
+
+// Monaco Editor를 로컬 번들에서 로드하도록 설정
+loader.config({
+  paths: {
+    vs: '/monaco/vs', // public/monaco/vs 경로 사용
+  },
+});
 
 interface MonacoEditorProps {
   value: string;

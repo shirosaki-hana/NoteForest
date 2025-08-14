@@ -4,12 +4,7 @@ const tseslint = require('typescript-eslint');
 
 module.exports = tseslint.config(
   {
-    ignores: [
-      'dist',
-      'node_modules',
-      `auth`,
-      `database`
-    ],
+    ignores: ['dist', 'node_modules', `auth`, `database`],
   },
   // TypeScript 파일에만 TS 규칙 적용
   {

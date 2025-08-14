@@ -50,7 +50,9 @@ function createSession() {
 }
 
 async function isValidSession(token: string | undefined): Promise<boolean> {
-  if (!token) {return false;}
+  if (!token) {
+    return false;
+  }
   const exp = sessions[token];
   if (!exp || exp < Date.now()) {
     delete sessions[token];
@@ -68,7 +70,9 @@ function removeSession(token: string) {
 // 인증 미들웨어 (API용)
 export async function requireAuth(req: Request, res: Response, next: NextFunction) {
   const token = req.cookies[SESSION_COOKIE];
-  if (await isValidSession(token)) {return next();}
+  if (await isValidSession(token)) {
+    return next();
+  }
   res.status(401).json({ error: 'Unauthorized' });
 }
 

@@ -13,7 +13,10 @@ export default defineConfig({
       brotliSize: true,
     }),
   ],
+  publicDir: 'public',
   build: {
+    // Monaco Editor 정적 파일 복사를 위한 설정
+    copyPublicDir: true,
     rollupOptions: {
       output: {
         manualChunks: {
@@ -21,9 +24,14 @@ export default defineConfig({
           pluginKatex: ['rehype-katex'],
           pluginRehype: ['rehype-highlight', 'rehype-raw'],
           pluginRemark: ['remark-gfm', 'remark-math'],
+          monaco: ['monaco-editor'], // monaco editor를 별도 청크로 분리
         },
       },
     },
+  },
+  define: {
+    // Monaco Editor 워커 경로 설정
+    'process.env.MONACO_BASE_URL': JSON.stringify('/monaco/'),
   },
   server: {
     proxy: {
