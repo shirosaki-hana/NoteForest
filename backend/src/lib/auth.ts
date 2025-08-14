@@ -78,8 +78,14 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
 
 // 브루트포스 공격 방어용 Rate Limit
 const limiter = rateLimit({
-  windowMs: 900000,
-  max: 5,
+  windowMs: 900000, // 15분
+  max: 5, // 최대 5회 시도
+  standardHeaders: true, // 표준 헤더 반환 (`RateLimitLimit`, `RateLimitRemaining`, etc.)
+  legacyHeaders: false, // `X-RateLimit-*` 헤더 비활성화
+  keyGenerator: req => {
+    // trust proxy 설정과 함께 안전한 IP 추출
+    return req.ip || req.socket.remoteAddress || 'unknown';
+  },
   handler: (req, res) => {
     res.status(429).json({ error: '너무 많이 시도 했어요.' });
   },

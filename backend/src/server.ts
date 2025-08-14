@@ -18,6 +18,7 @@ const frontendDistPath = path.join(__dirname, '../../frontend/dist');
 const isDevelopment = process.env.NODE_ENV === 'development';
 
 if (!isDevelopment) {
+  app.set('trust proxy', 1);
   app.use(helmet());
 }
 app.use(compression());

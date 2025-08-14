@@ -23,7 +23,7 @@ export default defineConfig({
           theme: ['@mui/material', '@mui/icons-material'],
           pluginKatex: ['rehype-katex'],
           pluginRehype: ['rehype-highlight', 'rehype-raw'],
-          pluginRemark: ['remark-gfm', 'remark-math']
+          pluginRemark: ['remark-gfm', 'remark-math'],
         },
       },
     },
