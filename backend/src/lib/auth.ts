@@ -101,7 +101,7 @@ authRouter.get('/check', async (req: Request, res: Response) => {
 });
 
 // 비밀번호 설정 상태 확인
-authRouter.get('/status', limiter, async (req: Request, res: Response) => {
+authRouter.get('/status', async (req: Request, res: Response) => {
   try {
     await fs.access(PASSWORD_FILE);
     res.json({ passwordSet: true });
