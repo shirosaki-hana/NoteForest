@@ -23,8 +23,7 @@ export default defineConfig({
           theme: ['@mui/material', '@mui/icons-material'],
           pluginKatex: ['rehype-katex'],
           pluginRehype: ['rehype-highlight', 'rehype-raw'],
-          pluginRemark: ['remark-gfm', 'remark-math'],
-          monaco: ['monaco-editor'], // monaco editor를 별도 청크로 분리
+          pluginRemark: ['remark-gfm', 'remark-math']
         },
       },
     },
