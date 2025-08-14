@@ -3,18 +3,25 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import cookieParser from 'cookie-parser';
+import compression from 'compression';
+import helmet from 'helmet';
 import { requireAuth, authRouter } from './lib/auth';
 import { apiRouter } from './lib/api';
 import { logger } from './lib/log';
 import { Request, Response } from 'express';
 
-dotenv.config();
+dotenv.config({ quiet: true });
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 const frontendDistPath = path.join(__dirname, '../../frontend/dist');
+const isDevelopment = process.env.NODE_ENV === 'development';
 
-app.use(cors()); //TODO : 환경변수로 프로덕트/데브모드 구분하고 운영 도메인 입력받아서 CORS제한하도록 보안 강화 필요)
+if (!isDevelopment) {
+  app.use(helmet());
+}
+app.use(compression());
+app.use(cors({ origin: isDevelopment ? true : process.env.FRONTEND_URL, credentials: true }));
 app.use(express.json({ limit: '50mb' })); // 50MB까지 허용
 app.use(express.urlencoded({ extended: true, limit: '50mb' })); // URL 인코딩된 데이터도 50MB까지
 app.use(cookieParser());
@@ -35,5 +42,7 @@ app.get('/', (req: Request, res: Response) => {
 
 // 서버 리스닝
 app.listen(PORT, () => {
+  logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  logger.info(`Frontend static files served from: ${frontendDistPath}`);
   logger.success(`Server is running on http://127.0.0.1:${PORT}`);
 });

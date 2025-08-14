@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import { Router, Request, Response, NextFunction } from 'express';
 import { logger } from './log';
+import rateLimit from 'express-rate-limit';
 
 const SAVE_DIR = path.join(__dirname, '../../auth');
 const PASSWORD_FILE = path.join(SAVE_DIR, 'password.hash');
@@ -71,6 +72,15 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
   res.status(401).json({ error: 'Unauthorized' });
 }
 
+// 브루트포스 공격 방어용 Rate Limit
+const limiter = rateLimit({
+  windowMs: 900000,
+  max: 5,
+  handler: (req, res) => {
+    res.status(429).json({ error: 'TOO_MANY_LOGIN_ATTEMPTS' });
+  },
+});
+
 // 인증 API 라우트
 export const authRouter = Router();
 
@@ -87,7 +97,7 @@ authRouter.get('/check', async (req: Request, res: Response) => {
 });
 
 // 비밀번호 설정 상태 확인
-authRouter.get('/status', async (req: Request, res: Response) => {
+authRouter.get('/status', limiter, async (req: Request, res: Response) => {
   try {
     await fs.access(PASSWORD_FILE);
     res.json({ passwordSet: true });
@@ -97,7 +107,7 @@ authRouter.get('/status', async (req: Request, res: Response) => {
 });
 
 // 비밀번호 설정
-authRouter.post('/setup', async (req: Request, res: Response) => {
+authRouter.post('/setup', limiter, async (req: Request, res: Response) => {
   const clientIP =
     req.headers['x-forwarded-for'] || req.ip || req.socket.remoteAddress || 'Unknown IP';
 
@@ -133,7 +143,7 @@ authRouter.post('/setup', async (req: Request, res: Response) => {
 });
 
 // 로그인
-authRouter.post('/login', async (req: Request, res: Response) => {
+authRouter.post('/login', limiter, async (req: Request, res: Response) => {
   const clientIP =
     req.headers['x-forwarded-for'] || req.ip || req.socket.remoteAddress || 'Unknown IP';
 
@@ -178,7 +188,7 @@ authRouter.post('/login', async (req: Request, res: Response) => {
 });
 
 // 로그아웃
-authRouter.post('/logout', async (req: Request, res: Response) => {
+authRouter.post('/logout', limiter, async (req: Request, res: Response) => {
   const token = req.cookies[SESSION_COOKIE];
   if (token) {
     removeSession(token);
