@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import { Router, Request, Response, NextFunction } from 'express';
 import { logger } from './log';
-import rateLimit from 'express-rate-limit';
+import rateLimit, { ipKeyGenerator } from 'express-rate-limit';
 
 const SAVE_DIR = path.join(__dirname, '../../auth');
 const PASSWORD_FILE = path.join(SAVE_DIR, 'password.hash');
@@ -82,10 +82,7 @@ const limiter = rateLimit({
   max: 5, // 최대 5회 시도
   standardHeaders: true, // 표준 헤더 반환 (`RateLimitLimit`, `RateLimitRemaining`, etc.)
   legacyHeaders: false, // `X-RateLimit-*` 헤더 비활성화
-  keyGenerator: req => {
-    // trust proxy 설정과 함께 안전한 IP 추출
-    return req.ip || req.socket.remoteAddress || 'unknown';
-  },
+  keyGenerator: req => ipKeyGenerator(req.ip ?? req.socket.remoteAddress ?? '127.0.0.1'),
   handler: (req, res) => {
     res.status(429).json({ error: '너무 많이 시도 했어요.' });
   },

@@ -7,7 +7,6 @@ import rehypeKatex from 'rehype-katex';
 import rehypeQuoteHighlight from '../utils/rehypeQuoteHighlight';
 import { Box, alpha } from '@mui/material';
 import 'highlight.js/styles/github-dark.css';
-//import 'katex/dist/katex.min.css' 이거 왜 안되노?
 
 interface MarkdownRendererProps {
   content: string;
@@ -112,7 +111,12 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
     >
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkMath]}
-        rehypePlugins={[rehypeHighlight, rehypeKatex, rehypeRaw, rehypeQuoteHighlight]}
+        rehypePlugins={[
+          rehypeHighlight,
+          [rehypeKatex, { output: 'mathml' }],
+          rehypeRaw,
+          rehypeQuoteHighlight,
+        ]}
       >
         {content || '*내용이 없습니다.*'}
       </ReactMarkdown>
