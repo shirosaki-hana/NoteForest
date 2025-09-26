@@ -186,7 +186,7 @@ authRouter.post('/login', limiter, async (req: Request, res: Response) => {
     const token = createSession();
     logger.log(`Session created: ${token} for IP: ${clientIP}`);
 
-    res.cookie(SESSION_COOKIE, token, { httpOnly: true });
+    res.cookie(SESSION_COOKIE, token, { httpOnly: true, sameSite: 'strict', secure: true });
     res.json({ success: true });
   } catch (e) {
     logger.error('Login error:', e);
