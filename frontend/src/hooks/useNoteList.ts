@@ -24,7 +24,7 @@ export function useNoteList(isOpen: boolean): UseNoteListReturn {
         setNotes(response.data);
         setError(null);
       } else {
-        setError(response.error || '메모를 불러오는데 실패했습니다.');
+        setError(response.error || '노트를 불러오는데 실패했습니다.');
       }
     } catch (err) {
       setError('네트워크 오류가 발생했습니다.');

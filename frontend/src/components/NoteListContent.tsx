@@ -38,7 +38,7 @@ export default function NoteListContent({
   if (notes.length === 0) {
     return (
       <Box sx={{ p: 3, textAlign: 'center' }}>
-        <Typography>메모가 없습니다.</Typography>
+        <Typography>노트가 없습니다.</Typography>
       </Box>
     );
   }

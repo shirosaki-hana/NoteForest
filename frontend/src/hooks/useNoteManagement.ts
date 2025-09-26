@@ -70,7 +70,7 @@ export function useNoteManagement(
     500
   );
 
-  // 최초 로드 시 로컬 저장소 확인 후 메모 복원 또는 신규 생성
+  // 최초 로드 시 로컬 저장소 확인 후 노트 복원 또는 신규 생성
   useEffect(() => {
     if (!selectedNoteId) {
       // 7일 이상 된 오래된 draft들 먼저 정리
@@ -120,10 +120,10 @@ export function useNoteManagement(
         }
       }
 
-      // draft가 없으면 새 메모 생성
+      // draft가 없으면 새 노트 생성
       const newNoteId = v4();
       setSelectedNoteId(newNoteId);
-      console.log('최초 접속 시 새 메모 생성:', newNoteId);
+      console.log('최초 접속 시 새 노트 생성:', newNoteId);
     }
   }, [selectedNoteId]);
 
@@ -136,17 +136,17 @@ export function useNoteManagement(
       setNoteContent('');
       setEditorKey(prev => prev + 1);
 
-      showSnackbar('새 메모가 생성되었습니다.', 'info');
-      console.log('새 메모 작성:', newNoteId);
+      showSnackbar('새 노트가 생성되었습니다.', 'info');
+      console.log('새 노트 작성:', newNoteId);
     } catch (error) {
-      console.error('새 메모 생성 중 오류:', error);
-      showSnackbar('새 메모 생성에 실패했습니다.', 'error');
+      console.error('새 노트 생성 중 오류:', error);
+      showSnackbar('새 노트 생성에 실패했습니다.', 'error');
     }
   };
 
   const handleSaveNote = async () => {
     if (!selectedNoteId) {
-      showSnackbar('메모를 선택해주세요.', 'error');
+      showSnackbar('노트를 선택해주세요.', 'error');
       return;
     }
 
@@ -166,18 +166,18 @@ export function useNoteManagement(
       });
 
       if (response.success) {
-        showSnackbar('메모가 성공적으로 저장되었습니다.', 'success');
-        console.log('메모 저장 완료:', selectedNoteId);
+        showSnackbar('노트가 성공적으로 저장되었습니다.', 'success');
+        console.log('노트 저장 완료:', selectedNoteId);
 
         // 저장 성공 시 해당 노트의 draft 삭제
         clearDraft(selectedNoteId);
       } else {
-        throw new Error(response.error || '메모 저장에 실패했습니다.');
+        throw new Error(response.error || '노트 저장에 실패했습니다.');
       }
     } catch (error) {
-      console.error('메모 저장 중 오류:', error);
+      console.error('노트 저장 중 오류:', error);
       const errorMessage =
-        error instanceof Error ? error.message : '메모 저장 중 오류가 발생했습니다.';
+        error instanceof Error ? error.message : '노트 저장 중 오류가 발생했습니다.';
       showSnackbar(errorMessage, 'error');
     } finally {
       setSaving(false);
@@ -186,7 +186,7 @@ export function useNoteManagement(
 
   const handleNoteSelect = async (noteId: string) => {
     if (!noteId) {
-      // 빈 문자열이나 null인 경우 새 메모 상태로 초기화
+      // 빈 문자열이나 null인 경우 새 노트 상태로 초기화
       setSelectedNoteId('');
       setNoteTitle('');
       setNoteTags([]);
@@ -236,14 +236,14 @@ export function useNoteManagement(
         setNoteContent(loadedContent);
         setEditorKey(prev => prev + 1);
 
-        console.log('메모 로드 완료:', noteId);
+        console.log('노트 로드 완료:', noteId);
       } else {
-        throw new Error(response.error || '메모를 불러올 수 없습니다.');
+        throw new Error(response.error || '노트를 불러올 수 없습니다.');
       }
     } catch (error) {
-      console.error('메모 로드 중 오류:', error);
+      console.error('노트 로드 중 오류:', error);
       const errorMessage =
-        error instanceof Error ? error.message : '메모를 불러오는 중 오류가 발생했습니다.';
+        error instanceof Error ? error.message : '노트를 불러오는 중 오류가 발생했습니다.';
       showSnackbar(errorMessage, 'error');
 
       // 오류 발생 시 빈 상태로 초기화

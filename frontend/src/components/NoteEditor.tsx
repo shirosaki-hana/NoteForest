@@ -225,7 +225,7 @@ export default function NoteEditor({
             }}
           >
             <CircularProgress size={40} />
-            <Typography variant='body2'> 메모를 불러오는 중... </Typography>
+            <Typography variant='body2'> 노트를 불러오는 중... </Typography>
           </Box>
         ) : (
           <Box sx={{ position: 'relative', flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
@@ -239,23 +239,6 @@ export default function NoteEditor({
           </Box>
         )}
       </Box>
-
-      {/* 마스코트 이미지*/}
-      <Box
-        component='img'
-        src='/mascot.svg'
-        alt='NoteForest Mascot'
-        sx={{
-          position: 'absolute',
-          bottom: 5,
-          right: 0,
-          width: 400,
-          height: 400,
-          opacity: 0.2,
-          zIndex: 1,
-          pointerEvents: 'none',
-        }}
-      />
     </Box>
   );
 }

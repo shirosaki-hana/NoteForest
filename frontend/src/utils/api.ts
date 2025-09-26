@@ -20,17 +20,17 @@ async function apiCall<T>(endpoint: string, options?: RequestInit): Promise<T> {
   return response.json();
 }
 
-// 메모 목록 조회
+// 노트 목록 조회
 export async function getNoteList(): Promise<NoteListResponse> {
   return apiCall<NoteListResponse>('/list');
 }
 
-// 특정 메모 조회
+// 특정 노트 조회
 export async function getNote(uuid: string): Promise<NoteResponse> {
   return apiCall<NoteResponse>(`/read/${uuid}`);
 }
 
-// 메모 생성/수정
+// 노트 생성/수정
 export async function writeNote(note: {
   uuid: string;
   title: string;
@@ -43,7 +43,7 @@ export async function writeNote(note: {
   });
 }
 
-// 메모 삭제
+// 노트 삭제
 export async function deleteNote(uuid: string): Promise<DeleteResponse> {
   return apiCall<DeleteResponse>(`/${uuid}`, {
     method: 'DELETE',

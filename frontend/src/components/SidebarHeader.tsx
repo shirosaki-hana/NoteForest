@@ -27,7 +27,7 @@ export default function SidebarHeader({ notesCount, onClose }: SidebarHeaderProp
               fontFamily: 'Rubik, Cambria, "Times New Roman", Times, serif',
             }}
           >
-            메모 목록
+            노트 목록
           </Typography>
         </Box>
         <IconButton onClick={onClose}>
@@ -35,11 +35,11 @@ export default function SidebarHeader({ notesCount, onClose }: SidebarHeaderProp
         </IconButton>
       </Box>
 
-      {/* 메모 개수 */}
+      {/* 노트 개수 */}
       <Box sx={{ p: 2, pb: 1 }}>
         <Typography variant='body2'>
           {' '}
-          {/* on-surface-variant */}총 {notesCount}개의 메모
+          {/* on-surface-variant */}총 {notesCount}개의 노트
         </Typography>
       </Box>
     </>

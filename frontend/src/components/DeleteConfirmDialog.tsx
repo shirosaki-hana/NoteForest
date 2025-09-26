@@ -28,12 +28,12 @@ export default function DeleteConfirmDialog({
       <DialogTitle>
         {' '}
         {/* on-background */}
-        메모 삭제
-      </DialogTitle>
+        노트 삭제
+      </DialogTitle>ㄴ
       <DialogContent>
         <DialogContentText sx={{ mb: 2 }}>
           {' '}
-          {/* on-surface-variant */}"{note?.title || '제목 없음'}" 메모를 정말 삭제하시겠습니까?
+          {/* on-surface-variant */}"{note?.title || '제목 없음'}" 노트를 정말 삭제하시겠습니까?
         </DialogContentText>
         <DialogContentText> {/* error color */}이 작업은 되돌릴 수 없습니다.</DialogContentText>
       </DialogContent>

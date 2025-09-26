@@ -27,7 +27,7 @@ const getFilePath = (uuid: string): string => {
   }
 })();
 
-// 메모 작성/수정 API
+// 노트 작성/수정 API
 apiRouter.post('/write', async (req: Request, res: Response): Promise<void> => {
   try {
     const { uuid, title, tags, createdAt, body } = req.body; // id -> uuid
@@ -65,19 +65,19 @@ apiRouter.post('/write', async (req: Request, res: Response): Promise<void> => {
 
     res.json({
       success: true,
-      message: '메모가 성공적으로 저장되었습니다.',
+      message: '노트가 성공적으로 저장되었습니다.',
       uuid, // fileId -> uuid
     });
   } catch (error) {
-    logger.error('메모 저장 오류:', error);
+    logger.error('노트 저장 오류:', error);
     res.status(500).json({
       success: false,
-      error: '메모 저장 중 오류가 발생했습니다.',
+      error: '노트 저장 중 오류가 발생했습니다.',
     });
   }
 });
 
-// 메모 읽기 API
+// 노트 읽기 API
 apiRouter.get('/read/:uuid', async (req: Request, res: Response): Promise<void> => {
   try {
     const { uuid } = req.params;
@@ -100,7 +100,7 @@ apiRouter.get('/read/:uuid', async (req: Request, res: Response): Promise<void> 
     } catch {
       res.status(404).json({
         success: false,
-        error: '요청한 메모를 찾을 수 없습니다.',
+        error: '요청한 노트를 찾을 수 없습니다.',
       });
       return;
     }
@@ -121,16 +121,16 @@ apiRouter.get('/read/:uuid', async (req: Request, res: Response): Promise<void> 
       },
     });
   } catch (error) {
-    logger.error('메모 읽기 오류:', error);
+    logger.error('노트 읽기 오류:', error);
     res.status(500).json({
       success: false,
-      error: '메모를 읽는 중 오류가 발생했습니다.',
+      error: '노트를 읽는 중 오류가 발생했습니다.',
     });
   }
 });
 
-// 메모 목록 조회 API
-// Todo:  이 API는 데이터베이스 디렉터리의 모든 .md 파일을 조회하여 메모 목록을 반환합니다.
+// 노트 목록 조회 API
+// Todo:  이 API는 데이터베이스 디렉터리의 모든 .md 파일을 조회하여 노트 목록을 반환합니다.
 //        파일 시스템 오버헤드가 우려스러우므로, 차후 캐싱구현 또는 데이터베이스로 전환하는 것을 고려할 수 있습니다.
 apiRouter.get('/list', async (req: Request, res: Response): Promise<void> => {
   try {
@@ -190,15 +190,15 @@ apiRouter.get('/list', async (req: Request, res: Response): Promise<void> => {
       count: memoList.length,
     });
   } catch (error) {
-    logger.error('메모 목록 조회 오류:', error);
+    logger.error('노트 목록 조회 오류:', error);
     res.status(500).json({
       success: false,
-      error: '메모 목록을 조회하는 중 오류가 발생했습니다.',
+      error: '노트 목록을 조회하는 중 오류가 발생했습니다.',
     });
   }
 });
 
-// 메모 삭제 API
+// 노트 삭제 API
 apiRouter.delete('/:uuid', async (req: Request, res: Response): Promise<void> => {
   try {
     const { uuid } = req.params;
@@ -221,7 +221,7 @@ apiRouter.delete('/:uuid', async (req: Request, res: Response): Promise<void> =>
     } catch {
       res.status(404).json({
         success: false,
-        error: '삭제하려는 메모를 찾을 수 없습니다.',
+        error: '삭제하려는 노트를 찾을 수 없습니다.',
       });
       return;
     }
@@ -231,14 +231,14 @@ apiRouter.delete('/:uuid', async (req: Request, res: Response): Promise<void> =>
 
     res.json({
       success: true,
-      message: '메모가 성공적으로 삭제되었습니다.',
+      message: '노트가 성공적으로 삭제되었습니다.',
       deletedUuid: uuid, // deletedId -> deletedUuid
     });
   } catch (error) {
-    logger.error('메모 삭제 오류:', error);
+    logger.error('노트 삭제 오류:', error);
     res.status(500).json({
       success: false,
-      error: '메모를 삭제하는 중 오류가 발생했습니다.',
+      error: '노트를 삭제하는 중 오류가 발생했습니다.',
     });
   }
 });

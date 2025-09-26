@@ -17,7 +17,7 @@ interface SidebarProps {
 const SIDEBAR_WIDTH = 340;
 
 export default function Sidebar({ isOpen, onToggle, selectedNoteId, onNoteSelect }: SidebarProps) {
-  // 메모 목록 관리
+  // 노트 목록 관리
   const { notes, loading, error, refetchNotes } = useNoteList(isOpen);
 
   // 스낵바 관리
@@ -47,7 +47,7 @@ export default function Sidebar({ isOpen, onToggle, selectedNoteId, onNoteSelect
     >
       <SidebarHeader notesCount={notes.length} onClose={onToggle} />
 
-      {/* 메모 목록 */}
+      {/* 노트 목록 */}
       <Box sx={{ flexGrow: 1, overflow: 'auto' }}>
         <NoteListContent
           loading={loading}
