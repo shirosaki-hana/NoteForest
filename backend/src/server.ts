@@ -10,7 +10,7 @@ import { apiRouter } from './lib/api';
 import { logger } from './lib/log';
 import { Request, Response } from 'express';
 
-dotenv.config({ quiet: true });
+dotenv.config({ path: path.join(__dirname, '../.env'), quiet: true });
 
 const app = express();
 const PORT = process.env.PORT || 3001;
