@@ -30,7 +30,7 @@ export default function AuthPageLayout({ icon, title, subtitle, children }: Auth
             bgcolor: theme.palette.mode === 'light' ? 'rgba(255,255,255,0.7)' : 'rgba(2,6,23,0.55)',
           })}
         >
-          <Stack spacing={3} alignItems='center'>
+          <Stack spacing={3} sx={{ alignItems: 'center' }}>
             {/* 아이콘 */}
             <Box
               sx={{

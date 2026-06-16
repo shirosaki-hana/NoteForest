@@ -177,13 +177,15 @@ export default function NoteSidebar({ open, onClose, variant = 'permanent' }: No
             placeholder={t('note.sidebar.searchPlaceholder')}
             value={searchInput}
             onChange={e => setSearchInput(e.target.value)}
-            InputProps={{
-              startAdornment: <SearchIcon sx={{ mr: 1, color: 'text.secondary' }} />,
-              endAdornment: searchInput && (
-                <IconButton size='small' onClick={handleSearchClear}>
-                  <CloseIcon fontSize='small' />
-                </IconButton>
-              ),
+            slotProps={{
+              input: {
+                startAdornment: <SearchIcon sx={{ mr: 1, color: 'text.secondary' }} />,
+                endAdornment: searchInput && (
+                  <IconButton size='small' onClick={handleSearchClear}>
+                    <CloseIcon fontSize='small' />
+                  </IconButton>
+                ),
+              },
             }}
           />
         </form>
@@ -245,9 +247,11 @@ export default function NoteSidebar({ open, onClose, variant = 'permanent' }: No
                               </Box>
                             )
                           }
-                          primaryTypographyProps={{
-                            noWrap: true,
-                            fontSize: '0.9rem',
+                          slotProps={{
+                            primary: {
+                              noWrap: true,
+                              sx: { fontSize: '0.9rem' },
+                            },
                           }}
                         />
                       </ListItemButton>
